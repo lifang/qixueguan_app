@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    <RelativeLayout
+        android:id="@+id/restitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/lantan" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignLeft="@id/restitle"
+            android:gravity="center_vertical" >
+
+            <Button
+                android:id="@+id/btnreturn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/fan"
+                android:onClick="onclick" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textregist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/regist"
+            android:textColor="@color/white"
+            android:textSize="16dp" />
+    </RelativeLayout>
+    
+
+</LinearLayout>
