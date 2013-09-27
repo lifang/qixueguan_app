@@ -1,5 +1,6 @@
 package com.comdosoft.qixueguan;
 
+<<<<<<< HEAD
 import com.comdosoft.qixueguan.tool.Urlinterface;
 
 import android.app.Activity;
@@ -48,5 +49,16 @@ public class UserActivity extends Activity implements Urlinterface {
 
 	public void onclick(View v) {
 
+=======
+import android.app.Activity;
+import android.os.Bundle;
+
+public class UserActivity extends Activity {
+
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
 	}
 }

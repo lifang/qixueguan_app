@@ -9,8 +9,11 @@ public interface Urlinterface {
 	//注册
 	static final String REGIST_URL = IP
 			+ "/api/users/regist";
+<<<<<<< HEAD
 	
 	//编辑
 	static final String UPDATE_USER = IP
 			+ "/api/users/update";
+=======
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
 }

@@ -50,7 +50,11 @@ public class RegistActivity extends Activity implements Urlinterface {
 		int width = display.getWidth();
 		int height = display.getHeight();
 		RelativeLayout restitle = (RelativeLayout)findViewById(R.id.restitle);
+<<<<<<< HEAD
 		LayoutParams titlelp = new LayoutParams(width, height/10*2);
+=======
+		LayoutParams titlelp = new LayoutParams(width, height/10);
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
 		restitle.setLayoutParams(titlelp);
 		
 		pwds.setOnFocusChangeListener(new View.OnFocusChangeListener() {

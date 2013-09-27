@@ -3,7 +3,10 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
+<<<<<<< HEAD
 
+=======
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
     <RelativeLayout
         android:id="@+id/restitle"
         android:layout_width="wrap_content"
@@ -21,8 +24,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
+<<<<<<< HEAD
                 android:onClick="onclick"
                 android:text="@string/fan" />
+=======
+                android:text="@string/fan"
+                android:onClick="onclick" />
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
         </LinearLayout>
 
         <TextView
@@ -33,6 +41,7 @@
             android:text="@string/regist"
             android:textColor="@color/white"
             android:textSize="16dp" />
+<<<<<<< HEAD
 
         <Button
             android:id="@+id/friend"
@@ -127,5 +136,9 @@
         android:layout_height="wrap_content"
         android:onClick="onclick"
         android:text="@string/exit" />
+=======
+    </RelativeLayout>
+    
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
 
 </LinearLayout>

@@ -44,12 +44,18 @@ public final class R {
         public static final int bg01=0x7f020000;
         public static final int ic_launcher=0x7f020001;
         public static final int loginbtn=0x7f020002;
+<<<<<<< HEAD
         public static final int portrait=0x7f020003;
     }
     public static final class id {
         public static final int ScrollView=0x7f060004;
         public static final int age=0x7f06001b;
         public static final int birthday=0x7f06001e;
+=======
+    }
+    public static final class id {
+        public static final int ScrollView=0x7f060004;
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
         public static final int btnreturn=0x7f060015;
         public static final int cate_menu=0x7f06000d;
         public static final int close_menu=0x7f06000f;
@@ -58,8 +64,12 @@ public final class R {
         public static final int days=0x7f060012;
         public static final int email=0x7f060000;
         public static final int everyday=0x7f060011;
+<<<<<<< HEAD
         public static final int exit=0x7f060022;
         public static final int friend=0x7f060018;
+=======
+        public static final int friend=0x7f060017;
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
         public static final int layout=0x7f060010;
         public static final int left=0x7f06000a;
         public static final int login=0x7f060002;
@@ -69,6 +79,7 @@ public final class R {
         public static final int name=0x7f060008;
         public static final int pager=0x7f06000b;
         public static final int pwd=0x7f060001;
+<<<<<<< HEAD
         public static final int pwds=0x7f060017;
         public static final int regist=0x7f060003;
         public static final int restitle=0x7f060014;
@@ -81,6 +92,13 @@ public final class R {
         public static final int user_birthday=0x7f06001f;
         public static final int user_sex=0x7f06001c;
         public static final int username=0x7f060019;
+=======
+        public static final int pwds=0x7f060018;
+        public static final int regist=0x7f060003;
+        public static final int restitle=0x7f060014;
+        public static final int right=0x7f06000c;
+        public static final int textregist=0x7f060016;
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
         public static final int wide_btn=0x7f060009;
     }
     public static final class layout {
@@ -92,19 +110,26 @@ public final class R {
         public static final int user=0x7f030005;
     }
     public static final class string {
+<<<<<<< HEAD
         public static final int age=0x7f050007;
         public static final int app_name=0x7f050000;
         public static final int bianji=0x7f05000a;
         public static final int birthday=0x7f050009;
         public static final int exit=0x7f05000d;
+=======
+        public static final int app_name=0x7f050000;
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
         public static final int fan=0x7f050003;
         public static final int friend=0x7f050006;
         public static final int left=0x7f050004;
         public static final int login=0x7f050001;
         public static final int regist=0x7f050002;
         public static final int right=0x7f050005;
+<<<<<<< HEAD
         public static final int sex=0x7f050008;
         public static final int update_email=0x7f05000b;
         public static final int update_pwd=0x7f05000c;
+=======
+>>>>>>> be3859dc3d50513da46878871b14cf993d648647
     }
 }
