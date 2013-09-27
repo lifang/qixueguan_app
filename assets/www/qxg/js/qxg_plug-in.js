@@ -106,17 +106,125 @@ $(function(){
                 $("#question_option").options_sort(a);
                 $.each(a,function(index,value){
                     $("#question_content").filter_content(value);
-                    html += '<div index_blanks="' + index + '" class="fillin_blank_option">'+ value +'</div>';
+                    html += '<div class="fillin_blank_option" index_blanks="'+index+'">'+ value +'</div>';
                 })
                 $("#question_option").html(html);
+                $("#question_option").fill_in_blanks();
                 break;
-            case '6':
+            case '6': //排序题
+                $("#question_content").html(course.questions[questions_index].content);  //显示题目
+                $("#question_option").options_sort(a);
+                html = '<input type="button" id="revert_sorting" value="还原"/>'
+                $.each(a,function(index){
+                    html += '<div class="vacancies_blank">__________</div>';
+                })
+                $.each(a,function(index,value){
+                    $("#question_content").filter_content(value);
+                    html += '<div class="fillin_blank_option" index_blanks="'+index+'">'+ value +'</div>';
+                });
+                $("#question_option").html(html);
+                $("#question_option").sequence_revert();
                 break;
             case '7':
                 break;
             default:
                 break;
         }
+    };
+    //填空题
+    $.fn.fill_in_blanks = function(){
+        //加载该方法的时候默认选择第一个空格
+        $("div.vacancies_blank").eq(0).css({
+            color: "#ff0011",
+            background: "blue"
+        });
+        $("div.vacancies_blank").eq(0).attr("blanks","choice");
+        //点击上面的空格做判断，如果该空格中的内容不是_____,则取到值，并在此替换
+        $(".vacancies_blank").click(function(){
+            $(".vacancies_blank").css({   //  所有class变为白色
+                color: "#000000",
+                background: "white"
+            });
+            $(this).css({       //当前样式便会被选中
+                color: "#ff0011",
+                background: "blue"
+            });
+            $(".vacancies_blank").removeAttr("blanks");  // 一处所有blanks属性
+            $(this).attr("blanks","choice");   //给当前加上属性
+            if($(this).html()!='__________'){
+                $("div[class='fillin_blank_option']:contains('" + $(this).html() +"')").css({     //与选项内容相同的样式回复显示
+                    display: "block"
+                });
+                $(this).html("__________"); //显示当前被点击的初始内容
+            //                $(".vacancies_blank").removeAttr("blanks");
+            //                $(this).attr("blanks","choice");
+            }
+        });
+        $(".fillin_blank_option").click(function(){
+            $("div[class='fillin_blank_option']:contains('" +$("div[class='vacancies_blank'][blanks='choice']").html() +"')").css({     //与选项内容相同的样式回复显示
+                display: "block"
+            });
+            $("div[class='vacancies_blank'][blanks='choice']").html($(this).html());
+            $(this).css({
+                display: "none"
+            });
+            $("div[class='vacancies_blank'][blanks='choice']").css({
+                color: "#000000",
+                background: "red"
+            });
+            //给值到变量param_content中
+            param_content = null;
+            $(".vacancies_blank").each(function(){
+                if(param_content==null){
+                    param_content = $(this).html();
+                }else{
+                    param_content += "||"+$(this).html();
+                }
+            })
+        });
+    };
+    //排序题 排序，还原
+    $.fn.sequence_revert = function(){
+        var index = 0;
+        $("div.vacancies_blank").eq(index).css({
+            color: "#ff0011",
+            background: "blue"
+        });
+        $("div.vacancies_blank").eq(index).attr("blanks","choice");
+        //点击排序
+        $(".fillin_blank_option").click(function(){
+            $("div[class='vacancies_blank'][blanks='choice']").html($(this).html());
+            $(this).css({
+                display: "none"
+            });
+            $("div[class='vacancies_blank'][blanks='choice']").css({
+                color: "#000000",
+                background: "red"
+            });
+            $("div[class='vacancies_blank'][blanks='choice']").removeAttr("blanks");
+            index++;
+            $("div.vacancies_blank").eq(index).css({
+                color: "#ff0011",
+                background: "blue"
+            });
+            $("div.vacancies_blank").eq(index).attr("blanks","choice");
+
+            //给值到变量param_content中
+            param_content = null;
+            $(".vacancies_blank").each(function(){
+                if(param_content==null){
+                    param_content = $(this).html();
+                }else{
+                    param_content += "||"+$(this).html();
+                }
+            })
+        });
+
+        //还原排序
+        $("#revert_sorting").click(function(){
+            $("#question_content").loading_title();
+            param_content = null;
+        });
     };
 
     //单项选择题。选择答案，背景颜色改变，并把答案放进param_content变量中。
@@ -132,7 +240,7 @@ $(function(){
                 color: "#ff0011",
                 background: "blue"
             });
-        })
+        });
     };
     //多选题，选择答案
     $.fn.choose_options_maney = function(){
@@ -317,6 +425,8 @@ $(function(){
             })
         })
     };
+
+
 //    $(this).parent("div").find(".ligature_option_right").addClass("hide_content");
 //多选题，选择答案
 //    $.fn.choose_options_maney = function(){
