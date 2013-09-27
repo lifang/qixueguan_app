@@ -8,4 +8,11 @@
 	<string name="left">＜</string>
 	<string name="right">＞</string>
 	<string name="friend">添加好友</string>
+	<string name="age">年龄</string>
+	<string name="sex">性别</string>
+	<string name="birthday">生日</string>
+	<string name="bianji">编辑</string>
+	<string name="update_email">修改email</string>
+	<string name="update_pwd">修改密码</string>
+	<string name="exit">退出登陆</string>
 </resources>

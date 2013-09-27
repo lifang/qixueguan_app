@@ -3,11 +3,16 @@ package com.comdosoft.qixueguan;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,9 +37,10 @@ public class LoginActivity extends Activity implements Urlinterface {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// 去掉Activity上面的状态栏
 		setContentView(R.layout.login);
-
 		email = (EditText) findViewById(R.id.email);
 		pwd = (EditText) findViewById(R.id.pwd);
+		email.setText("123456");
+		pwd.setText("q");
 	}
 
 	class RunHandler implements Runnable {
@@ -52,6 +58,30 @@ public class LoginActivity extends Activity implements Urlinterface {
 				mes.what = 2;
 			} else {
 				mes.what = 3;
+				try {
+					JSONObject item = new JSONObject(json);
+					String user = item.getString("user");
+					item = new JSONObject(user);
+					String id = item.getString("id");
+					String name = item.getString("name");
+					String email = item.getString("email");
+					String birthday = item.getString("birthday");
+					String sex = item.getString("sex");
+					String img = item.getString("img");
+
+					SharedPreferences userInfo = getSharedPreferences("id", 0);
+					Editor editor = userInfo.edit();// 获取编辑器
+					editor.putString("id", id);
+					editor.putString("name", name);
+					editor.putString("email", email);
+					editor.putString("birthday", birthday);
+					editor.putString("sex", sex);
+					editor.putString("img", img);
+					editor.commit();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
 			}
 			handler.sendMessage(mes);
 
@@ -69,18 +99,20 @@ public class LoginActivity extends Activity implements Urlinterface {
 				email.setText("");
 				pwd.setText("");
 				builder.setMessage("该Email不存在");
-				builder.setPositiveButton("确定",null);
+				builder.setPositiveButton("确定", null);
+				builder.setPositiveButton("确定", null);
 				builder.show();
 				break;
 			case 2:
 				pwd.setText("");
 				builder.setMessage("密码错误！");
-				builder.setPositiveButton("确定",null);
+				builder.setPositiveButton("确定", null);
 				builder.show();
 				break;
 			case 3:
 				LoginActivity.this.finish();
-				Intent intent = new Intent(LoginActivity.this, QixueguanActivity.class);
+				Intent intent = new Intent(LoginActivity.this,
+						UserActivity.class);
 				startActivity(intent);
 				break;
 			}
@@ -90,30 +122,29 @@ public class LoginActivity extends Activity implements Urlinterface {
 	public void onclick(View v) {
 		Builder builder = new AlertDialog.Builder(LoginActivity.this);
 		builder.setTitle("提示");
+		Intent intent = new Intent();
 		switch (v.getId()) {
 		case R.id.login:
-//			if (email.getText().toString().equals("")) {
-//				builder.setMessage("Email不可为空");
-//				builder.setPositiveButton("确定", null);
-//				builder.show();
-//			} else if (pwd.getText().toString().equals("")) {
-//				builder.setMessage("密码不可为空");
-//				builder.setPositiveButton("确定", null);
-//				builder.show();
-//			} else {
-//				prodialog = new ProgressDialog(LoginActivity.this);
-//				prodialog.setMessage("提交数据中，请稍后..");
-//				prodialog.show();
-//				Thread thread = new Thread(new RunHandler());
-//				thread.start();
-//			}
-			Intent intent = new Intent(LoginActivity.this, Navigation.class);
-			startActivity(intent);
+			if (email.getText().toString().equals("")) {
+				builder.setMessage("Email不可为空");
+				builder.setPositiveButton("确定", null);
+				builder.show();
+			} else if (pwd.getText().toString().equals("")) {
+				builder.setMessage("密码不可为空");
+				builder.setPositiveButton("确定", null);
+				builder.show();
+			} else {
+				prodialog = new ProgressDialog(LoginActivity.this);
+				prodialog.setMessage("提交数据中，请稍后..");
+				prodialog.show();
+				Thread thread = new Thread(new RunHandler());
+				thread.start();
+			}
 			break;
 		case R.id.regist:
 			LoginActivity.this.finish();
-//			Intent intent = new Intent(LoginActivity.this, RegistActivity.class);
-//			startActivity(intent);
+			intent.setClass(LoginActivity.this, RegistActivity.class);
+			startActivity(intent);
 			break;
 		}
 	}
