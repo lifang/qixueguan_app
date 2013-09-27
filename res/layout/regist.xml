@@ -33,15 +33,12 @@
             android:textColor="@color/white"
             android:textSize="16dp" />
         
-<<<<<<< HEAD
-=======
         <Button 
             android:id="@+id/friend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/friend"
             android:layout_alignParentRight="true"/>
->>>>>>> be3859dc3d50513da46878871b14cf993d648647
     </RelativeLayout>
     <EditText
         android:id="@+id/email"

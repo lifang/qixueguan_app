@@ -3,22 +3,16 @@ package com.comdosoft.qixueguan;
 import java.util.HashMap;
 import java.util.Map;
 
-<<<<<<< HEAD
 import org.json.JSONException;
 import org.json.JSONObject;
 
-=======
->>>>>>> be3859dc3d50513da46878871b14cf993d648647
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.content.Intent;
-<<<<<<< HEAD
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-=======
->>>>>>> be3859dc3d50513da46878871b14cf993d648647
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -43,16 +37,10 @@ public class LoginActivity extends Activity implements Urlinterface {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// 去掉Activity上面的状态栏
 		setContentView(R.layout.login);
-<<<<<<< HEAD
 		email = (EditText) findViewById(R.id.email);
 		pwd = (EditText) findViewById(R.id.pwd);
 		email.setText("123456");
 		pwd.setText("q");
-=======
-
-		email = (EditText) findViewById(R.id.email);
-		pwd = (EditText) findViewById(R.id.pwd);
->>>>>>> be3859dc3d50513da46878871b14cf993d648647
 	}
 
 	class RunHandler implements Runnable {
@@ -70,7 +58,6 @@ public class LoginActivity extends Activity implements Urlinterface {
 				mes.what = 2;
 			} else {
 				mes.what = 3;
-<<<<<<< HEAD
 				try {
 					JSONObject item = new JSONObject(json);
 					String user = item.getString("user");
@@ -83,11 +70,11 @@ public class LoginActivity extends Activity implements Urlinterface {
 					String img = item.getString("img");
 
 					SharedPreferences userInfo = getSharedPreferences("id", 0);
-					Editor editor = userInfo.edit();//获取编辑器
+					Editor editor = userInfo.edit();// 获取编辑器
 					editor.putString("id", id);
 					editor.putString("name", name);
 					editor.putString("email", email);
-					editor.putString("birthday",birthday);
+					editor.putString("birthday", birthday);
 					editor.putString("sex", sex);
 					editor.putString("img", img);
 					editor.commit();
@@ -95,8 +82,6 @@ public class LoginActivity extends Activity implements Urlinterface {
 					e.printStackTrace();
 				}
 
-=======
->>>>>>> be3859dc3d50513da46878871b14cf993d648647
 			}
 			handler.sendMessage(mes);
 
@@ -114,33 +99,20 @@ public class LoginActivity extends Activity implements Urlinterface {
 				email.setText("");
 				pwd.setText("");
 				builder.setMessage("该Email不存在");
-<<<<<<< HEAD
 				builder.setPositiveButton("确定", null);
-=======
-				builder.setPositiveButton("确定",null);
->>>>>>> be3859dc3d50513da46878871b14cf993d648647
+				builder.setPositiveButton("确定", null);
 				builder.show();
 				break;
 			case 2:
 				pwd.setText("");
 				builder.setMessage("密码错误！");
-<<<<<<< HEAD
 				builder.setPositiveButton("确定", null);
 				builder.show();
 				break;
 			case 3:
-
 				LoginActivity.this.finish();
 				Intent intent = new Intent(LoginActivity.this,
 						UserActivity.class);
-=======
-				builder.setPositiveButton("确定",null);
-				builder.show();
-				break;
-			case 3:
-				LoginActivity.this.finish();
-				Intent intent = new Intent(LoginActivity.this, QixueguanActivity.class);
->>>>>>> be3859dc3d50513da46878871b14cf993d648647
 				startActivity(intent);
 				break;
 			}
@@ -150,7 +122,6 @@ public class LoginActivity extends Activity implements Urlinterface {
 	public void onclick(View v) {
 		Builder builder = new AlertDialog.Builder(LoginActivity.this);
 		builder.setTitle("提示");
-<<<<<<< HEAD
 		Intent intent = new Intent();
 		switch (v.getId()) {
 		case R.id.login:
@@ -174,32 +145,6 @@ public class LoginActivity extends Activity implements Urlinterface {
 			LoginActivity.this.finish();
 			intent.setClass(LoginActivity.this, RegistActivity.class);
 			startActivity(intent);
-=======
-		switch (v.getId()) {
-		case R.id.login:
-//			if (email.getText().toString().equals("")) {
-//				builder.setMessage("Email不可为空");
-//				builder.setPositiveButton("确定", null);
-//				builder.show();
-//			} else if (pwd.getText().toString().equals("")) {
-//				builder.setMessage("密码不可为空");
-//				builder.setPositiveButton("确定", null);
-//				builder.show();
-//			} else {
-//				prodialog = new ProgressDialog(LoginActivity.this);
-//				prodialog.setMessage("提交数据中，请稍后..");
-//				prodialog.show();
-//				Thread thread = new Thread(new RunHandler());
-//				thread.start();
-//			}
-			Intent intent = new Intent(LoginActivity.this, Navigation.class);
-			startActivity(intent);
-			break;
-		case R.id.regist:
-			LoginActivity.this.finish();
-//			Intent intent = new Intent(LoginActivity.this, RegistActivity.class);
-//			startActivity(intent);
->>>>>>> be3859dc3d50513da46878871b14cf993d648647
 			break;
 		}
 	}
