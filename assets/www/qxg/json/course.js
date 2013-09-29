@@ -1,5 +1,13 @@
 course = {"course_id":"1","chapter_id":"2","round_id":"3","question_total":"3",
 "questions":[
+{"question_id":"","content":"选词（单选、每空一个选项）填空。There __text__ an energy crisis in America, and it has nothing to __text__ with fossil fuels. Millions of __text__ get up each morning already weary over the day holds. ",
+"question_types" : "8","branch_questions":
+[{"branch_question_id" : "15","branch_content":"","branch_question_types":"5","options":"is;||;are;||;am","answer": "is"},
+　　{"branch_question_id":"16","branch_content":"","branch_question_types" : "5","options" : "done;||;do;||;did","answer": "do"},
+　　{"branch_question_id":"17","branch_content":"","branch_question_types":"5","options":"we;||;us;||;our","answer":"us"}],
+"card_id" : "1",  "card_name" : "听力生词",  "description" : "knowledge n. 知识、学识",  "card_types" : "词汇"},
+
+
     　　{"question_id":"","content":"将下列的单词按照正确顺序组成句子：","question_types":"6",
 "branch_questions":[{"branch_question_id":"1","branch_content":"","branch_question_types":"7",
 "options":"This||is||an||apple!","answer": "This||is||an||apple!"}],
@@ -27,6 +35,11 @@ course = {"course_id":"1","chapter_id":"2","round_id":"3","question_total":"3",
 {"question_id":"5","content":"多选题，此题可以选择多个答案<file>English.wav</file>","question_types":"2",
  "branch_questions":[{"branch_content":"鸟毛","options":"one||two||three","answer":"one||two"},
  {"branch_content":"鸟蛋","options":"one||two||three","answer":"one||two"}],
-"card_id":"1","card_name":"听力生词","description":"knowledge n. 知识、学识","card_types":"词汇"}
+"card_id":"1","card_name":"听力生词","description":"knowledge n. 知识、学识","card_types":"词汇"},
+
+    　　{"question_id":"","content":"朗读下列句子：This is an apple!","question_types" : "7",
+"branch_questions":[{"branch_question_id":"1","branch_content":"","branch_question_types" : "8","options" : "",
+"answer": "This is an apple!"}],
+"card_id" : "1",  "card_name" : "听力生词",  "description" : "knowledge n. 知识、学识",  "card_types" : "词汇"}
 
 ]}
