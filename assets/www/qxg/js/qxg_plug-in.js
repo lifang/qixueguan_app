@@ -1,7 +1,12 @@
 $(function(){
-    //调用加载题目的方法，实现进入题目之后自动家
+    //调用加载题目的方法，实现进入题目之后自动加载
+    //加载时间
+    $(".loading_time").loading_time();
+    existing_blood = course.blood;
+    //加载血量
+    $("#question_content").load_control_blood();
     $("#question_content").loading_title();
-    $(document).on('click',".btn_div input[id='loaddata']",function(){
+    $(document).on('click',".load_topics input[id='loaddata']",function(){
         var type = course.questions[questions_index].question_types;   //获取题目类型
         var button = $(this);
         switch(type){
@@ -25,6 +30,11 @@ $(function(){
                             alert("答错了");
                             questions_index++;
                             param_content = null;
+                            existing_blood--;
+                            if(existing_blood<=0){
+                                alert("没血了");
+                            }
+                            $("#progressbar").load_control_blood();
                         //调用扣血的方法
                         }
                         button.val("下一题");
@@ -35,6 +45,8 @@ $(function(){
                     $("#question_content").loading_title();
                 }
                 if(questions_index==course.question_total){
+                    //计算时间
+                    var  time_val = hour*3600 + minutes*60 + sec;
                 //调用提交的方法
                 }
                 break;
@@ -57,6 +69,11 @@ $(function(){
                         }else{
                             alert("答错了");
                             questions_index++;
+                            existing_blood--;
+                            if(existing_blood<=0){
+                                alert("没血了");
+                            }
+                            $("#progressbar").load_control_blood();
                         }
                         button.val("下一题");
                         param_content = null;
@@ -84,6 +101,9 @@ $(function(){
         var options = course.questions[questions_index].branch_questions[0].options;   //拼凑答案选项
         var a = options.split("||");  //分割选项。
         var html='';  //定义题目怎么显示
+        //显示每一题的知识卡片
+        $(".content_knowledge_cards").html(course.questions[questions_index].card_name);
+        $("#card_of_knowledge").show_knowledge_card();
         switch(type){
             case '1':   //单选题
                 $("#question_content").options_sort(a);//打乱顺序
@@ -183,6 +203,41 @@ $(function(){
                 break;
         }
     };
+
+    //加载时间方法(时间改变)
+    $.fn.loading_time = function(){
+        sec++;
+        if(sec==60)
+        {
+            minutes++;
+            sec=0;
+        }
+        if(minutes==60)
+        {
+            hour++;
+            minutes=0;
+        }
+        var time_val=hour+"时"+minutes+"分"+sec+"秒";
+       $(".loading_time").html(time_val);
+        setTimeout('$(".loading_time").loading_time()',1000);
+    }
+    //加载扣除血量
+    $.fn.load_control_blood = function(){
+        //获取当前进度条的总长度
+        var width = $(".load_blood").width();
+        var width_blood = width/course.blood;
+        $("#progressbar").width(existing_blood*width_blood);
+    }
+
+    //点击显示知识卡片
+    $.fn.show_knowledge_card = function(){
+        $("#knowledge_card_input").click(function(){
+            $(".knowledge_card_hidden").show();
+        });
+        $("#collection_knowledge_cards").click(function(){
+            $(".knowledge_card_hidden").hide();
+        });
+    }
     //完形填空选择答案
     $.fn.cloze_choice_option = function(){
 
@@ -225,7 +280,6 @@ $(function(){
                     param_content += ';=;' + $(this).html();
                 }
             });
-            alert(param_content);
         });
     }
 
@@ -254,8 +308,6 @@ $(function(){
                     display: "block"
                 });
                 $(this).html("__________"); //显示当前被点击的初始内容
-            //                $(".vacancies_blank").removeAttr("blanks");
-            //                $(this).attr("blanks","choice");
             }
         });
         $(".fillin_blank_option").click(function(){
@@ -395,6 +447,7 @@ $(function(){
                 param_content = $(this).parents("li").find("input").val();
             }
         })
+        
         $(".checkornot").click(function(){
             //            $(".checkornot").removeAttr("checked");
             //            $(this).click();

@@ -17,13 +17,28 @@
         <META NAME="Description" CONTENT="">
     </HEAD>
     <BODY>
-        <div class="btn_div">
-            <div id="question_content"></div>
-            <div id="question_option">
-                <ul id="option_select" style="list-style-type: upper-latin"></ul>
+        <div class="load_all">
+            <div class="loading_time"></div>
+            <div class="loading_props_blood">
+                <div class="load_blood"style='width:410px;height:18px;background-color:#FFFAF0'>
+                    <div id='progressbar' style='width:410px;height:18px;background-color:#00FFFF'></div>
+                </div>
             </div>
-            <input type="button" value="核对" id="loaddata" />
-            <div></div>
+            <div class="load_topics">
+                <div id="question_content"></div>
+                <div id="card_of_knowledge">
+                    <input type="button" value="知识卡片" id="knowledge_card_input"/>
+                    <div class="knowledge_card_hidden">
+                        <div class="content_knowledge_cards"></div>
+                        <input type="button" value="收藏" id="collection_knowledge_cards"/>
+                    </div>
+                </div>
+                <div id="question_option">
+                    <ul id="option_select" style="list-style-type: upper-latin"></ul>
+                </div>
+                <input type="button" value="核对" id="loaddata" />
+                <div></div>
+            </div>
         </div>
     </BODY>
 </HTML>
@@ -31,5 +46,9 @@
     var questions_index = 0;  //题目下标
     var param_content;   //写入内容
     var question_total;  //总题数
+    var existing_blood;   //现有血量
+    var hour=0;
+    var minutes=0;
+    var sec=0;
 
 </script>
