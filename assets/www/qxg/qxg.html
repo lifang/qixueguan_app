@@ -3,20 +3,29 @@
 <HTML>
     <HEAD>
     	<meta charset="utf-8"/>
-        <script src="js/jquery-v1.9.0.js"></script>
-        <script language="javascript">
-		 var course;
-        </script>
-        <script src="json/course.js"></script>
-		
-        <script src="js/qxg_plug-in.js"></script>
-        <link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/style.css" />
         <TITLE> New Document </TITLE>
         <META http-equiv="Access-Control-Allow-Origin" content="*">
         <META NAME="Generator" CONTENT="EditPlus">
         <META NAME="Author" CONTENT="">
         <META NAME="Keywords" CONTENT="">
         <META NAME="Description" CONTENT="">
+        <script src="js/jquery-v1.9.0.js"></script>
+		
+        <script type="text/javascript">
+		   var course;
+		   var oHead = document.getElementsByTagName('HEAD').item(0); 
+           var script = document.createElement("script");
+			script.type = "text/javascript";
+			script.src = "json/course.js";  //获取到的值
+			oHead.appendChild(script);   
+
+			//$(document).ready(function(){window.setTimeout(function(){alert(course)},3)})	
+        </script>
+       
+        <script src="js/qxg_plug-in.js"></script>
+		
+        
         <!--[if IE 6]>
     <script src="js/DD_belatedPNG_0.0.8a-min.js"></script>
     <script>

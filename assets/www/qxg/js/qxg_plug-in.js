@@ -1,5 +1,12 @@
 $(document).ready(function(){
-    //加载时间
+	window.setTimeout(function(){
+	init_data();
+	load_question();
+	},5);
+});
+
+function init_data() {
+	    //加载时间
     $(".loading_time").loading_time();
     existing_blood = course.blood;
     //加载血量
@@ -134,12 +141,10 @@ $(document).ready(function(){
                 break;
         }
     })
-});
-$(function(){
-    
-});
+}
 
 //需要被调用到的jquery方法写在这里面
+function load_question() {
 (function($){
     //通过获取json中的问题类型加载不同题型
     $.fn.loading_title = function(){
@@ -950,3 +955,4 @@ $(function(){
     };
 
 })(jQuery)
+}
