@@ -4,6 +4,12 @@
     <HEAD>
     	<meta charset="utf-8"/>
         <script src="js/jquery-v1.9.0.js"></script>
+<!--        <script language="javascript">
+            $(function(){
+                var src_json = "json/course.js";  //获取到的值
+//                            document.write("<script type='text/javascript' src=" + src_json + ">var course;<\/script>");
+            });
+        </script>-->
         <script src="json/course.js">
             var course;
         </script>
@@ -15,6 +21,12 @@
         <META NAME="Author" CONTENT="">
         <META NAME="Keywords" CONTENT="">
         <META NAME="Description" CONTENT="">
+        <!--[if IE 6]>
+    <script src="js/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>
+      DD_belatedPNG.fix('*');
+    </script>
+    <![endif]-->
     </HEAD>
     <BODY>
         <div class="load_all">
@@ -24,6 +36,7 @@
                     <div id='progressbar' style='width:410px;height:18px;background-color:#00FFFF'></div>
                 </div>
             </div>
+            <div class="loading_props"></div>
             <div class="load_topics">
                 <div id="question_content"></div>
                 <div id="card_of_knowledge">
@@ -40,6 +53,7 @@
                 <div></div>
             </div>
         </div>
+
     </BODY>
 </HTML>
 <script type="text/javascript">
@@ -50,5 +64,6 @@
     var hour=0;
     var minutes=0;
     var sec=0;
-
+    var frequency_use_props = 0;//判断是否使用道具
+    var arr_complex = new Array();//取数组 定义一个数组把小题中的答案放进数组中  综合题中使用
 </script>

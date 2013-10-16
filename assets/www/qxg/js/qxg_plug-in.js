@@ -1,11 +1,17 @@
-$(function(){
-    //调用加载题目的方法，实现进入题目之后自动加载
+$(document).ready(function(){
     //加载时间
     $(".loading_time").loading_time();
     existing_blood = course.blood;
     //加载血量
     $("#question_content").load_control_blood();
+    //加载道具
+    $(".loading_props").loading_props();
+    //加载题目
     $("#question_content").loading_title();
+    //加载使用道具方法
+    $(".loading_props").use_of_props();
+    //加载收藏知识卡片方法
+    $("#collection_knowledge_cards").collection_knowledge_cards();
     $(document).on('click',".load_topics input[id='loaddata']",function(){
         var type = course.questions[questions_index].question_types;   //获取题目类型
         var button = $(this);
@@ -17,6 +23,8 @@ $(function(){
             case '5':
             case '6':
             case '7':
+            case '8':
+            case '10':
                 if(button.val()=="核对"){
                     if(param_content==null){
                         alert("请先填写答案");
@@ -24,12 +32,10 @@ $(function(){
                         if(param_content==course.questions[questions_index].branch_questions[0].answer){
                             alert("答对了");
                             questions_index++;  //答题之后题目下标加一
-                            param_content = null; //并且清除掉所填入的答案
                         }
                         else{
                             alert("答错了");
                             questions_index++;
-                            param_content = null;
                             existing_blood--;
                             if(existing_blood<=0){
                                 alert("没血了");
@@ -43,6 +49,7 @@ $(function(){
                 }else{
                     button.val("核对");
                     $("#question_content").loading_title();
+                    frequency_use_props = 0;
                 }
                 if(questions_index==course.question_total){
                     //计算时间
@@ -50,7 +57,7 @@ $(function(){
                 //调用提交的方法
                 }
                 break;
-            case '8':
+            case '9':
                 if(button.val()=="核对"){
                     if(param_content==null){
                         alert("请先填写答案");
@@ -81,6 +88,43 @@ $(function(){
                 }else{
                     button.val("核对");
                     $("#question_content").loading_title();
+                    frequency_use_props = 0;
+                }
+                if(questions_index==course.question_total){
+                //调用提交的方法
+                }
+                break;
+            case '11':
+                if(button.val()=="核对"){
+                    if(arr_complex==""){
+                        alert("请先填写答案");
+                    }else{
+                        var trueorfalse = true;
+                        $.each(arr_complex, function(index){
+                            if(arr_complex[index] != course.questions[questions_index].branch_questions[index].answer){
+                                trueorfalse = false;
+                                return false;
+                            }
+                        });
+                        if(trueorfalse == true){
+                            alert("答对了");
+                            questions_index++;  //答题之后题目下标加一
+                        }else{
+                            alert("答错了");
+                            questions_index++;
+                            existing_blood--;
+                            if(existing_blood<=0){
+                                alert("没血了");
+                            }
+                            $("#progressbar").load_control_blood();
+                        }
+                        button.val("下一题");
+                        arr_complex = null;
+                    }
+                }else{
+                    button.val("核对");
+                    $("#question_content").loading_title();
+                    frequency_use_props = 0;
                 }
                 if(questions_index==course.question_total){
                 //调用提交的方法
@@ -91,6 +135,9 @@ $(function(){
         }
     })
 });
+$(function(){
+    
+});
 
 //需要被调用到的jquery方法写在这里面
 (function($){
@@ -99,15 +146,16 @@ $(function(){
         var type = course.questions[questions_index].question_types;   //获取题目类型
         $("#question_content").html(course.questions[questions_index].content);          //显示题目
         var options = course.questions[questions_index].branch_questions[0].options;   //拼凑答案选项
-        var a = options.split("||");  //分割选项。
+        var a_optons_split = options.split("||");  //分割选项。
         var html='';  //定义题目怎么显示
         //显示每一题的知识卡片
         $(".content_knowledge_cards").html(course.questions[questions_index].card_name);
         $("#card_of_knowledge").show_knowledge_card();
+        
         switch(type){
             case '1':   //单选题
-                $("#question_content").options_sort(a);//打乱顺序
-                $.each(a, function( index, value ) {
+                $("#question_content").options_sort(a_optons_split);//打乱顺序
+                $.each(a_optons_split, function( index, value ) {
                     html += '<li>' + value + '</li>';
                 });
                 //显示答案选项
@@ -116,8 +164,8 @@ $(function(){
                 $("#question_content").choose_options_one();
                 break;
             case '2':  //多选题
-                $("#question_content").options_sort(a);
-                $.each(a, function( index, value ) {
+                $("#question_content").options_sort(a_optons_split);
+                $.each(a_optons_split, function( index, value ) {
                     html += '<li>' + value + '</li>';
                 });
                 //显示答案选项
@@ -125,9 +173,19 @@ $(function(){
                 //调用选择多选方法
                 $("#question_content").choose_options_maney();
                 break;
-            case '3': //图片题加载
-                $("#question_content").options_sort(a);
-                $.each(a, function( index, value ) {
+            case '3':  //语音选择
+                $("#question_content").options_sort(a_optons_split);//打乱顺序
+                $.each(a_optons_split,function(index,value){
+                    var value1 = $("#question_option").filter_content(value);
+                    html += '<li><div class="voice_choice">点击此处选择答案</div><div>' + value1 + '</div></li>';
+                });
+                $("#question_option").html(html);
+                $("#question_content").voice_choice();
+                
+                break;
+            case '4': //图片题加载
+                $("#question_content").options_sort(a_optons_split);
+                $.each(a_optons_split, function( index,value) {
                     html += '<li><div><img src="' + value +
                     '"onload="if(this.width>this.height){if(this.width!=300)this.width=300; }else{if(this.height!=300) this.height=300;}"/><input name="photos" class="checkornot" type="checkbox" value="'
                     +value+'" /></div></li>';
@@ -135,11 +193,11 @@ $(function(){
                 $("#question_option").html(html);
                 $("#question_content").choose_options_photos();
                 break;
-            case '4': //连线题
+            case '5': //连线题
                 var arr1 = new Array();//取数组
                 var arr2 = new Array();//取数组
                 var arr1_left = new Array;// 传值数组
-                $.each(a, function( index, value ){
+                $.each(a_optons_split, function( index, value ){
                     arr1[index] = value.split(";=;")[0];
                     arr2[index] = value.split(";=;")[1];
                     arr1_left[index] = value.split(";=;")[0];
@@ -159,51 +217,318 @@ $(function(){
                 $("#question_option").html(html);
                 $("#question_option").connection_effect(arr1_left);
                 break;
-            case '5': //填空题
+            case '6': //拖拽提
                 $("#question_content").html($("#question_content").html().replace(/__text__/g,"<div class='vacancies_blank'>__________</div>"));
-                $("#question_option").options_sort(a);
-                $.each(a,function(index,value){
+                $("#question_option").options_sort(a_optons_split);
+                $.each(a_optons_split,function(index,value){
                     $("#question_content").filter_content(value);
                     html += '<div class="fillin_blank_option" index_blanks="'+index+'">'+ value +'</div>';
                 })
                 $("#question_option").html(html);
-                $("#question_option").fill_in_blanks();
+                $("#question_option").drag_mention();
                 break;
-            case '6': //排序题
-                $("#question_option").options_sort(a);
+            case '7': //排序题
+                $("#question_option").options_sort(a_optons_split);
                 html = '<input type="button" id="revert_sorting" value="还原"/>'
-                $.each(a,function(index){
+                $.each(a_optons_split,function(index){
                     html += '<div class="vacancies_blank">__________</div>';
                 })
-                $.each(a,function(index,value){
+                $.each(a_optons_split,function(index,value){
                     $("#question_content").filter_content(value);
                     html += '<div class="fillin_blank_option" index_blanks="'+index+'">'+ value +'</div>';
                 });
                 $("#question_option").html(html);
                 $("#question_option").sequence_revert();
                 break;
-            case '7': //语音输入题
-                html = '<div><input type="button" value="点击输入语音"></div>'
+            case '8': //语音输入题
+                html = '<div><input type="button" value="点击输入语音" name="input_voice"></div>'
                 $("#question_option").html(html);
                 break;
-            case '8': // 完形填空
+            case '9': // 完形填空
                 $("#question_content").html($("#question_content").html().replace(/__text__/g,"<div class='vacancies_blank'><a class='a_vacancies_blank' href='#'>__________</a><ul class='blank_options'></ul></div>"));
                 $(".blank_options").each(function(index){
                     options = course.questions[questions_index].branch_questions[index].options;
                     a = options.split(";||;");
-                    $("#question_content").options_sort(a);//打乱顺序
-                    $.each(a,function(index,value){
+                    $("#question_content").options_sort(a_optons_split);//打乱顺序
+                    $.each(a_optons_split,function(index,value){
                         html += '<li class="blank_options_li" index_li="'+ index +'">'+ value +'</li>';
                     })
                     $(this).html(html);
                     html = "";
                 });
+                $("#question_option").html(html);
                 $("#question_option").cloze_choice_option();
+            case '10': //填空题
+                $("#question_content").html($("#question_content").html().replace(/__text__/g,
+                    "<div class='vacancies_blank'><input type='text' name='fill_in_blanks' value='__________' style='border-style:none;color:blue;'/></div>"));
+                $("#question_option").html(html);
+                $("#question_content").fill_in_blanks();
+                break;
+            case '11'://综合题
+                var branch_questions = course.questions[questions_index].branch_questions;
+                $.each(branch_questions,function(index,value){
+                    //获取题型，获取小题答案数组
+                    var branch_question_types = value.branch_question_types;
+                    var branch_option = value.options.split(";||;");
+                    var html_opton='';
+                    $("#question_option").options_sort(branch_option);
+                    //拼凑小题选项
+                    $.each(branch_option,function(index,value){
+                        html_opton += '<li>' + value + '</li>';
+                    });
+                    switch(branch_question_types){
+                        case '1': //单选
+                            html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
+                            + value.branch_content +'</div><div class="branch_option_one"><ul>' + html_opton + '<ul></div></li>';
+                            break;
+                        case '2': //多选
+                            html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
+                            + value.branch_content +'</div><div class="branch_option_maney"><ul>' + html_opton + '<ul></div></li>';
+                            break;
+                        case '3': //语音
+
+                            html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
+                            + value.branch_content +'</div><div><input type="button" value="点击输入语音" name="input_voice"></div></li>';
+                            break;
+                        case '4': //填空   
+                            html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
+                            + value.branch_content +'</div></li>';
+                            break;
+                        default:
+                            break;
+                    }
+                });
+                $("#question_option").html(html);
+                $("#question_option").html($("#question_option").html().replace(/__text__/g,
+                    "<div class='vacancies_blank'><input type='text' name='fill_in_blanks' value='__________' style='border-style:none;color:blue;'/></div>"));
+                $("#question_option").comprehensive_questions();
             default:
                 break;
         }
     };
+    //综合题
+    $.fn.comprehensive_questions =  function(){
+        //单选选择题
+        $(".branch_option_one li").click(function(){
+            var index_li = $(this).parents("li").attr("index_li");
+            arr_complex[index_li] = $(this).html();
+            $(".branch_option_one").find("li").css({
+                color: "#000000",
+                background: "white"
+            })
+            $(this).css({
+                color: "#ff0011",
+                background: "blue"
+            });
+        });
+        //多选题
+        $(".branch_option_maney li").click(function(){
+            //获取多选题的下标
+            var index_li = $(this).parents("li").attr("index_li");
+            //通过下标找到options
+            var options = course.questions[questions_index].branch_questions[index_li].options;
+            var this_a = options.split(";||;");
+            var option_class = $(this).attr('class');
+            if(option_class=="choice"){
+                $(this).removeAttr("class");
+                $(this).css({
+                    color: "#000000",
+                    background: "white"
+                });
+            }else{
+                $(this).addClass("choice");
+                $(this).css({
+                    color: "#ff0011",
+                    background: "blue"
+                });
+            }
+            //获取每个li标签下的值  根据获得json数据中的顺序，循环遍历找出被选中的选项。
+            arr_complex[index_li] = null
+            $.each(this_a,function(index,value){
+                if (arr_complex[index_li] == null){
+                    $('.choice').map(function(){
+                        if(value == $(this).text()){
+                            arr_complex[index_li] =  value;
+                        }
+                    });
+                }else{
+                    $('.choice').map(function(){
+                        if(value == $(this).text()){
+                            arr_complex[index_li] += ';||;' + value;
+                        }
+                    });
+                }
+            })
+        //            alert(param_content);
+        //            不打乱顺序可以直接拼凑
+        //            param_content = $('.choice').map(function(){
+        //                return $(this).text()
+        //            }).get().join('||')
+        });
+        $("input[name='input_voice']").click(function(){
+            var index_li = $(this).parents("li").attr("index_li");
+            arr_complex[index_li] = "has";
+        });
+        // 填空题
+        //点击的时候清除掉input中的内容
+        $("input[name='fill_in_blanks']").click(function(){
+            $(this).val("");
+        });
+        //离开的时候判断如果没内容则显示__________
+        $("input[name='fill_in_blanks']").blur(function(){
+            var index_li = $(this).parents("li").attr("index_li");
+            if($(this).val()==""){
+                $(this).val("__________");
+            }
+            //获取到每个空格中所填的内容
+            $("input[name='fill_in_blanks']").each(function(index){
+                if($("input[name='fill_in_blanks']").index(index) == 0){
+                    arr_complex[index_li] = $(this).val();
+                }else{
+                    arr_complex[index_li] += ';||;' + $(this).val();
+                }
+            });
+        });
+    }
+    //填空题
+    $.fn.fill_in_blanks = function(){
+        $("input[name='fill_in_blanks']").click(function(){
+            $(this).val("");
+        });
+        $("input[name='fill_in_blanks']").blur(function(){
+            if($(this).val()==""){
+                $(this).val("__________");
+            }
+            //获取到每个空格中所填的内容
+            $("input[name='fill_in_blanks']").each(function(index){
+                if($("input[name='fill_in_blanks']").index(index) == 0){
+                    param_content = $(this).val();
+                }else{
+                    param_content += ';||;' + $(this).val();
+                }
+            });
+        });
+    };
+    //加载道具方法
+    $.fn.loading_props = function(){
+        $.ajax({
+            cache : false,
+            async: false,
+            type:"get",
+            dataType:'json',
+            crossDomain: true,
+            data : {
+                uid : 2,
+                course_id : 1
+            },
+            url:"http://192.168.0.112:3000/api/chapters/user_prop",
+            success: function(data){
+                alert(124436867345234);
+                alert(data[0].name);
+            },
+            error: function(){
+                alert("error");
+            }
+        });
+        //                http://192.168.0.112:3000/api/chapters/user_prop?callback=?
+        //        $.getJSON("/123.js?callback=?",function(json){
+        //            alert(11111111);
+        //            alert(json);
+        //        });
 
+        var html="";
+        var objs = [{
+            id: 1,
+            count: 1,
+            name:"去错",
+            applicable_questions:'1,3,4'
+        }, {
+            id: 2,
+            count: 2,
+            name:"换题",
+            applicable_questions:'1,2,3,4,5,6,7,8,9,10'
+        },{
+            id: 3,
+            count: 0,
+            name:"作弊",
+            applicable_questions:'2'
+        },{
+            id: 4,
+            count: 5,
+            name:"加血",
+            applicable_questions:'1,2,3,4,5,6,7,8,9,10'
+        }];
+        $.each(objs,function(index,value){
+            if(value.count>0){
+                html += '<div class="prop_show" style_class="highlighted" prop_id="' +  value.id + '" applicable_questions="'+ value.applicable_questions +'"><img src="' + 'img/' + value.name+ '.jpg' + '"/></div>';
+            }else{
+                html += '<div class="prop_show" style_class="show_gloomy" prop_id="' +  value.id + '" applicable_questions="'+ value.applicable_questions +'"><img src="' + 'img/' + value.name+ '.jpg' + '"/></div>';
+            }
+        });
+        $(".loading_props").html(html);
+    }
+    //使用道具方法
+    $.fn.use_of_props = function(){
+        
+        $(".prop_show").click(function(){
+            //判断样式是不是 道具数量为0
+            if($(this).attr("style_class") == "show_gloomy"){
+                alert("没有此道具");
+            }else{
+                //判断是否使用了这种道具
+                if(frequency_use_props != 0){
+                    alert("已经使用过道具了");
+                }else{
+                    //取道具适用的题型和当前题型
+                    var arrt_questions_type = $(this).attr("applicable_questions").split(",");
+                    var type = course.questions[questions_index].question_types;
+                    //判断当前题目是否在此种道具使用行列
+                    if($.inArray(type,arrt_questions_type)>=0){
+                        var prop_id = $(this).attr("prop_id");
+                        //根据道具类型分类，达到每种道具的使用效果
+                        switch(prop_id){
+                            //去错卡
+                            case '1':
+                                $("#question_option").find("li").css({
+                                    color: "#000000",
+                                    background: "red"
+                                });
+                                break;
+                            //换题
+                            case '2':
+                                if(questions_index==course.question_total){
+                                    alert("最后一题要提交了");
+                                }else{
+                                    questions_index++;  //答题之后题目下标加一
+                                    param_content = null;
+                                    $("#question_content").loading_title();
+                                }
+                                break;
+                            //作弊卡
+                            case '3':
+                                break;
+                            //医疗卡
+                            case '4':
+                                //判断是不是满血
+                                if(existing_blood >= course.blood){
+                                    alert("满血状态不可使用");
+                                }else{
+                                    //加血调用加载血量方法
+                                    alert(existing_blood);
+                                    existing_blood++;
+                                    frequency_use_props++;
+                                    alert(existing_blood);
+                                    $("#progressbar").load_control_blood();
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        });
+    }
     //加载时间方法(时间改变)
     $.fn.loading_time = function(){
         sec++;
@@ -218,7 +543,7 @@ $(function(){
             minutes=0;
         }
         var time_val=hour+"时"+minutes+"分"+sec+"秒";
-       $(".loading_time").html(time_val);
+        $(".loading_time").html(time_val);
         setTimeout('$(".loading_time").loading_time()',1000);
     }
     //加载扣除血量
@@ -237,6 +562,37 @@ $(function(){
         $("#collection_knowledge_cards").click(function(){
             $(".knowledge_card_hidden").hide();
         });
+    }
+
+    // 收藏知识卡片
+    $.fn.collection_knowledge_cards = function(){
+        var card_id = course.questions[questions_index].card_id;
+        var course_id = course.course_id;
+        $("#collection_knowledge_cards").click(function(){
+            $.ajax({
+                cache: false,
+                async: false,
+                crossDomain: true,
+                type: 'POST',
+                url:"http://192.168.0.112:3000/api/chapters/save_card",
+                data:{
+                    uid : 3,
+                    card_id : card_id,
+                    course_id : course_id
+                },
+                dataType:'text',
+                success:function(data){
+                    if(data=="success"){
+                        alert("收藏成功");
+                    }
+                    else if(data=="error"){
+                        alert("收藏失败");
+                    }else if(data=="not_enough"){
+                        alert("卡槽容量不够");
+                    }
+                }
+            });
+        })
     }
     //完形填空选择答案
     $.fn.cloze_choice_option = function(){
@@ -282,9 +638,8 @@ $(function(){
             });
         });
     }
-
-    //填空题
-    $.fn.fill_in_blanks = function(){
+    //拖拽提
+    $.fn.drag_mention = function(){
         //加载该方法的时候默认选择第一个空格
         $("div.vacancies_blank").eq(0).css({
             color: "#ff0011",
@@ -394,8 +749,10 @@ $(function(){
     //多选题，选择答案
     $.fn.choose_options_maney = function(){
         $("#question_option li").click(function(){
+            //获取选项并拆分成数组
             var options = course.questions[questions_index].branch_questions[0].options;
             var this_a = options.split("||");
+            //如果已经被选中，点击取消选中，如果没被选中点击被选中根据class=“choice”
             var option_class = $(this).attr('class');
             if(option_class=="choice"){
                 $(this).removeAttr("class");
@@ -435,6 +792,22 @@ $(function(){
         //            }).get().join('||')
         });
     }
+    // 语音选择题
+    $.fn.voice_choice = function(){
+        $(".voice_choice").click(function(){
+            $("#question_option"). find("audio").removeAttr("checked");
+            $("#question_option").find("li").css({
+                color: "#000000",
+                background: "white"
+            });
+            $(this).parents("li").css({
+                color: "#ff0011",
+                background: "blue"
+            });
+            param_content ="<file>" + $(this).parents("li").find("audio").attr("picture_name") + "<file>";
+            alert(param_content);
+        });
+    }
 
     //图片选择题 点击一张图片把所有图片设置成未选中，同时再把这张图片设置成选中。
     $.fn.choose_options_photos = function(){
@@ -469,8 +842,8 @@ $(function(){
             $.each(arr_text,function(index,value){
                 if(index%2 == 1){
                     var file_text = value.split(".");
-                    if(file_text[0]=="mp3"){
-                        html_text += '<audio src="' + value + '"></audio>';
+                    if(file_text[1]=="mp3"){
+                        html_text += '<audio src="' + value + '" controls="controls" picture_name="' + value + '"></audio>';
                     }else{
                         html_text += '<img src="' + value + '"></img>';
                     }
