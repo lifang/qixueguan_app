@@ -1,39 +1,62 @@
 $(document).ready(function(){
     //定义变量（值从 安卓端获取）
-    //    daily_tasks = true;
+//    daily_tasks = true;
     //如果是每日任务则请求后台获取json
     if(daily_tasks){
-        course = {
-            "course_id":"1",
-            "chapter_id":"2",
-            "round_id":"3",
-            "question_total":"1",
-            "blood":"4",
-            "points_score":"100",
-            "specified_time":"10000",
-            "questions":[
+        //获取每日任务参数
+        $.ajax({
+            cache: false,
+            async: false,
+            crossDomain: true,
+            type: 'get',
+            url:"http://192.168.0.112:3000/api/user_manages/everyday_tasks",
+            data:{
+                uid : 3,
+                course_id : 1
+            },
+            dataType:'json',
+            success:function(data){
+                if(data.status==1){
+                    alert("用户暂无任务，请先完成更多的关卡挑战");
+                }else if(data.status==0){
+                    alert("已获取到json");
+                    course = data;
+                }
+            }
+        });
+        
 
-            {
-                "question_id":"2",
-                "content":"2多选题，此题可以选择多个答案<file>English.wav</file>",
-                "question_types":"1",
-                "branch_questions":[{
-                    "branch_content":"鸟毛",
-                    "options":"one;||;two;||;three",
-                    "answer":"one;||;two"
-                },
-
-                {
-                    "branch_content":"鸟蛋",
-                    "options":"one;||;two;||;three",
-                    "answer":"one;||;two"
-                }],
-                "card_id":"1",
-                "card_name":"7听力生词",
-                "description":"knowledge n. 知识、学识",
-                "card_types":"词汇"
-            }]
-        }
+    //        course = {
+    //            "course_id":1,
+    //            "chapter_id":2,
+    //            "round_id":3,
+    //            "question_count":1,
+    //            "blood":4,
+    //            "points_score":100,
+    //            "specified_time":10000,
+    //            "questions":[
+    //
+    //            {
+    //                "question_id":2,
+    //                "content":"2多选题，此题可以选择多个答案<file>English.wav</file>",
+    //                "question_types":1,
+    //                "branch_questions":[{
+    //                    "branch_content":"鸟毛",
+    //                    "options":"one;||;two;||;three",
+    //                    "answer":"one;||;two"
+    //                },
+    //
+    //                {
+    //                    "branch_content":"鸟蛋",
+    //                    "options":"one;||;two;||;three",
+    //                    "answer":"one;||;two"
+    //                }],
+    //                "card_id":1,
+    //                "card_name":"7听力生词",
+    //                "description":"knowledge n. 知识、学识",
+    //                "card_types":"词汇"
+    //            }]
+    //        }
     }
 
     //先对course  乱序
@@ -51,17 +74,16 @@ $(document).ready(function(){
     //加载收藏知识卡片方法
     $("#collection_knowledge_cards").collection_knowledge_cards();
     $(document).on('click',".load_topics input[id='loaddata']",function(){
-
         var type = course.questions[questions_index].question_types;   //获取题目类型
         var button = $(this);
         switch(type){
-            case '0':
-            case '1':
-            case '3':
-            case '4':
-            case '5':
-            case '7':
-            case '8':
+            case 0:
+            case 1:
+            case 3:
+            case 4:
+            case 5:
+            case 7:
+            case 8:
                 if(button.val()=="核对")
                 {
                     if(param_content==null){
@@ -93,12 +115,12 @@ $(document).ready(function(){
                     $("#question_content").loading_title();
                     frequency_use_props = 0;
                 }
-                if(questions_index==course.question_total-1){
+                if(questions_index==course.question_count-1){
                     //调用提交数据到andriod方法
                     $(".load_all").complete_submission_data();
                 }
                 break;
-            case '2':
+            case 2:
                 if(button.val()=="核对"){
                     if(param_content==null){
                         alert("请先填写答案");
@@ -122,6 +144,7 @@ $(document).ready(function(){
                             existing_blood--;
                             if(existing_blood<=0){
                                 alert("没血了");
+                            //调用andriod方法结束答题
                             }
                             $("#progressbar").load_control_blood();
                         }
@@ -133,13 +156,13 @@ $(document).ready(function(){
                     $("#question_content").loading_title();
                     frequency_use_props = 0;
                 }
-                if(questions_index==course.question_total){
+                if(questions_index==course.question_count){
                     //调用提交的方法
                     //调用提交数据到andriod方法
                     $(".load_all").complete_submission_data();
                 }
                 break;
-            case '6':
+            case 6:
                 if(button.val()=="核对"){
                     if(arr_complex==""){
                         alert("请先填写答案");
@@ -163,6 +186,7 @@ $(document).ready(function(){
                             existing_blood--;
                             if(existing_blood<=0){
                                 alert("没血了");
+                            //调用andriod方法结束答题
                             }
                             $("#progressbar").load_control_blood();
                         }
@@ -174,7 +198,7 @@ $(document).ready(function(){
                     $("#question_content").loading_title();
                     frequency_use_props = 0;
                 }
-                if(questions_index==course.question_total){
+                if(questions_index==course.question_count){
                     //调用提交的方法
                     //调用提交数据到andriod方法
                     $(".load_all").complete_submission_data();
@@ -201,7 +225,7 @@ $(document).ready(function(){
         //显示道具
         $(".loading_props").loading_props(type);
         switch(type){
-            case "0":   //单选题
+            case 0:   //单选题
                 $("#question_content").options_sort(a_optons_split);//打乱顺序
                 $.each(a_optons_split, function( index, value ) {
                     var value1 = $("#question_option").filter_content(value);
@@ -216,7 +240,7 @@ $(document).ready(function(){
                 //调用选择单选方法
                 $("#question_content").choose_options_one();
                 break;
-            case '1':  //多选题
+            case 1:  //多选题
                 $("#question_content").options_sort(a_optons_split);
                 $.each(a_optons_split, function( index, value ) {
                     var value1 = $("#question_option").filter_content(value);
@@ -233,7 +257,7 @@ $(document).ready(function(){
                 break;
     
 
-            case '4': //连线题
+            case 4: //连线题
                 var arr1 = new Array();//取数组
                 var arr2 = new Array();//取数组
                 var arr1_left = new Array;// 传值数组
@@ -257,7 +281,7 @@ $(document).ready(function(){
                 $("#question_option").html(html);
                 $("#question_option").connection_effect(arr1_left);
                 break;
-            case '7': //拖拽提
+            case 7: //拖拽提
                 $("#question_content").html($("#question_content").html().replace(/\[\[text\]\]/g,"<div class='vacancies_blank'>__________</div>"));
                 $("#question_option").options_sort(a_optons_split);
                 $.each(a_optons_split,function(index,value){
@@ -267,7 +291,7 @@ $(document).ready(function(){
                 $("#question_option").html(html);
                 $("#question_option").drag_mention();
                 break;
-            case '3': //排序题
+            case 3: //排序题
                 $("#question_option").options_sort(a_optons_split);
                 html = '<input type="button" id="revert_sorting" value="还原"/>'
                 $.each(a_optons_split,function(index){
@@ -280,11 +304,11 @@ $(document).ready(function(){
                 $("#question_option").html(html);
                 $("#question_option").sequence_revert();
                 break;
-            case '5': //语音输入题
+            case 5: //语音输入题
                 html = '<div><input type="button" value="点击输入语音" name="input_voice"></div>'
                 $("#question_option").html(html);
                 break;
-            case '2': // 完形填空s.mach(/\[\[text\]\]/)
+            case 2: // 完形填空s.mach(/\[\[text\]\]/)
                 $("#question_content").html($("#question_content").html().replace(/\[\[text\]\]/g,"<div class='vacancies_blank'><a class='a_vacancies_blank' href='#'>__________</a><ul class='blank_options'></ul></div>"));
                 $(".blank_options").each(function(index){
                     options = course.questions[questions_index].branch_questions[index].options;
@@ -299,13 +323,13 @@ $(document).ready(function(){
                 $("#question_option").html(html);
                 $("#question_option").cloze_choice_option();
                 break;
-            case '8': //填空题
+            case 8: //填空题
                 $("#question_content").html($("#question_content").html().replace(/\[\[text\]\]/g,
                     "<div class='vacancies_blank'><input type='text' name='fill_in_blanks' value='__________' style='border-style:none;color:blue;'/></div>"));
                 $("#question_option").html(html);
                 $("#question_content").fill_in_blanks();
                 break;
-            case '6'://综合题
+            case 6://综合题
                 var branch_questions = course.questions[questions_index].branch_questions;
                 $.each(branch_questions,function(index,value){
                     //获取题型，获取小题答案数组
@@ -318,19 +342,19 @@ $(document).ready(function(){
                         html_opton += '<li>' + value + '</li>';
                     });
                     switch(branch_question_types){
-                        case '0': //单选
+                        case 0: //单选
                             html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
                             + value.branch_content +'</div><div class="branch_option_one"><ul>' + html_opton + '<ul></div></li>';
                             break;
-                        case '1': //多选
+                        case 1: //多选
                             html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
                             + value.branch_content +'</div><div class="branch_option_maney"><ul>' + html_opton + '<ul></div></li>';
                             break;
-                        case '5': //语音
+                        case 5: //语音
                             html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
                             + value.branch_content +'</div><div><input type="button" value="点击输入语音" name="input_voice"></div></li>';
                             break;
-                        case '8': //填空
+                        case 8: //填空
                             html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
                             + value.branch_content +'</div></li>';
                             break;
@@ -352,22 +376,24 @@ $(document).ready(function(){
     $.fn.complete_submission_data =  function(){
         //计算时间
         var  time_val = hour*3600 + minutes*60 + sec;  // 用时
-        var question_total = course.question_total  //总题数
+        var question_count = course.question_count  //总题数
         var total_blood_volume = course.blood  //总血量
         // var existing_blood  现有血量
-        var questions_correctly = question_total-(total_blood_volume-existing_blood); //正确题数
-        var points_score = course.points_score//关卡分数
-        var specified_time = course.specified_time//规定时间
+        var questions_correctly = question_count-(total_blood_volume-existing_blood); //正确题数
+        var points_score = course.round_score//关卡分数
+        var specified_time = course.round_time//规定时间
+        var percent_time_correct = course.percent_time_correct;//正确率比例
         //(正确题数/总题数) * (正确率比列 * 关卡分数) + ((规定时间-用时+题数)/规定时间) * (时间比列 * 关卡分数)
         //调用提交的方法
         var json_return = {
             "daily_tasks":daily_tasks, //以此判断是不是每日任务
             "time_val":time_val,
-            "question_total":question_total,
+            "question_count":question_count,
             "total_blood_volume":total_blood_volume,
             "questions_correctly":questions_correctly,
             "points_score":points_score,
-            "specified_time":specified_time
+            "specified_time":specified_time,
+            "percent_time_correct":percent_time_correct
         }
         window.demo.test(json_return);
     }
@@ -551,7 +577,7 @@ $(document).ready(function(){
             applicable_questions:'0,1,2,3,4,5,6,7,8'
         }];
         $.each(objs,function(index,value){
-            if(daily_tasks&value.id=="2"){
+            if(daily_tasks&value.id==2){
                 return true;
             }
             var arrt_questions_type = value.applicable_questions.split(",");
@@ -893,10 +919,19 @@ $(document).ready(function(){
             $.each(arr_text,function(index,value){
                 if(index%2 == 1){
                     var file_text = value.split(".");
-                    if(file_text[1]=="mp3"){
-                        html_text += '<div class="file_voice"><audio src="' + value + '" controls="controls" picture_name="' + value + '"></audio></div>';
+                    if(daily_tasks){
+                        var url_prefix= course.questions[questions_index].prefix;
+                        if(file_text[1]=="mp3"){
+                            html_text += '<div class="file_voice"><audio src="' + url_prefix + value + '" controls="controls" picture_name="' + value + '"></audio></div>';
+                        }else{
+                            html_text += '<div class="file_img"><img src="' + url_prefix + value + '"onload="if(this.width>this.height){if(this.width!=300)this.width=300; }else{if(this.height!=300) this.height=300;}"></img></div>';
+                        }
                     }else{
-                        html_text += '<div class="file_img"><img src="' + value + '"onload="if(this.width>this.height){if(this.width!=300)this.width=300; }else{if(this.height!=300) this.height=300;}"></img></div>';
+                        if(file_text[1]=="mp3"){
+                            html_text += '<div class="file_voice"><audio src="' + value + '" controls="controls" picture_name="' + value + '"></audio></div>';
+                        }else{
+                            html_text += '<div class="file_img"><img src="' + value + '"onload="if(this.width>this.height){if(this.width!=300)this.width=300; }else{if(this.height!=300) this.height=300;}"></img></div>';
+                        }
                     }
                 }
                 else{
@@ -1016,7 +1051,7 @@ function use_of_props(obj){
             var arrt_questions_type = $(obj).attr("applicable_questions").split(",");
             var type = course.questions[questions_index].question_types;
             //判断当前题目是否在此种道具使用行列
-            if($.inArray(type,arrt_questions_type)>=0){
+            if($.inArray(type.toString(),arrt_questions_type)>=0){
                 var prop_id = $(obj).attr("prop_id");
                 //                $.ajax({
                 //                    cache: false,
@@ -1036,10 +1071,11 @@ function use_of_props(obj){
                 var answer = course.questions[questions_index].branch_questions[0].answer;
                 var type = course.questions[questions_index].question_types;   //获取题目类型
                 //根据道具类型分类，达到每种道具的使用效果
+                alert(type);
                 switch(prop_id){
                     //去错卡
                     case '1':
-                        if(type=='0'){
+                        if(type==0){
                             $("#question_option").find("li").each(function(){
                                 alert($(this).find("input").val());
                                 if($(this).find("input").val()!=answer){
@@ -1055,7 +1091,7 @@ function use_of_props(obj){
                         break;
                     //换题
                     case '2':
-                        if(questions_index==course.question_total-1){
+                        if(questions_index==course.question_count-1){
                             alert("最后一题要提交了");
                         }else{
                             questions_index++;  //答题之后题目下标加一
@@ -1066,7 +1102,7 @@ function use_of_props(obj){
                     //作弊卡
                     case '3':
                         var arr_answer = answer.split(";||;")
-                        if(type=='1'){
+                        if(type==1){
                             $("#question_option").find("li").each(function(){
                                 if($.inArray($(this).find("input").val(),arr_answer)>=0){
                                     if($(this).attr("class")=="choice"){
