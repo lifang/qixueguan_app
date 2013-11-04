@@ -1,6 +1,7 @@
 $(document).ready(function(){
+    //    jQuery.noConflict();
     //定义变量（值从 安卓端获取）
-//    daily_tasks = true;
+    //    daily_tasks = true;
     //如果是每日任务则请求后台获取json
     if(daily_tasks){
         //获取每日任务参数
@@ -59,10 +60,12 @@ $(document).ready(function(){
     //        }
     }
 
-    //先对course  乱序
-    var course_questions = course.questions;
-    $(".load_all").options_sort(course_questions);//打乱顺序
+    //    //先对course  乱序
+    //    var course_questions = course.questions;
+    //    $(".question_content").options_sort(course_questions);//打乱顺序
     //加载时间
+    $(".loading_props").pro_showorhide();
+
     $(".loading_time").loading_time();
     existing_blood = course.blood;
     //加载血量
@@ -73,7 +76,7 @@ $(document).ready(function(){
     $("#question_content").loading_title();
     //加载收藏知识卡片方法
     $("#collection_knowledge_cards").collection_knowledge_cards();
-    $(document).on('click',".load_topics input[id='loaddata']",function(){
+    $(document).on('click',"input[id='loaddata']",function(){
         var type = course.questions[questions_index].question_types;   //获取题目类型
         var button = $(this);
         switch(type){
@@ -103,7 +106,7 @@ $(document).ready(function(){
                                 alert("没血了");
                             //调用andriod方法结束答题
                             }
-                            $("#progressbar").load_control_blood();
+                            $(".progressbar").load_control_blood();
                         //调用扣血的方法
                         }
                         button.val("下一题");
@@ -117,7 +120,7 @@ $(document).ready(function(){
                 }
                 if(questions_index==course.question_count-1){
                     //调用提交数据到andriod方法
-                    $(".load_all").complete_submission_data();
+                    $(".question_content").complete_submission_data();
                 }
                 break;
             case 2:
@@ -146,7 +149,7 @@ $(document).ready(function(){
                                 alert("没血了");
                             //调用andriod方法结束答题
                             }
-                            $("#progressbar").load_control_blood();
+                            $(".progressbar").load_control_blood();
                         }
                         button.val("下一题");
                         param_content = null;
@@ -159,7 +162,7 @@ $(document).ready(function(){
                 if(questions_index==course.question_count){
                     //调用提交的方法
                     //调用提交数据到andriod方法
-                    $(".load_all").complete_submission_data();
+                    $(".question_content").complete_submission_data();
                 }
                 break;
             case 6:
@@ -188,7 +191,7 @@ $(document).ready(function(){
                                 alert("没血了");
                             //调用andriod方法结束答题
                             }
-                            $("#progressbar").load_control_blood();
+                            $(".progressbar").load_control_blood();
                         }
                         button.val("下一题");
                         arr_complex = null;
@@ -201,7 +204,7 @@ $(document).ready(function(){
                 if(questions_index==course.question_count){
                     //调用提交的方法
                     //调用提交数据到andriod方法
-                    $(".load_all").complete_submission_data();
+                    $(".question_content").complete_submission_data();
                 }
                 break;
             default:
@@ -215,24 +218,32 @@ $(document).ready(function(){
     //通过获取json中的问题类型加载不同题型
     $.fn.loading_title = function(){
         var type = course.questions[questions_index].question_types;   //获取题目类型
-        $("#question_content").html(course.questions[questions_index].content);          //显示题目
+        var questions_content = course.questions[questions_index].content;
+        var questions_contents =  $("#question_option").filter_question(questions_content);
+        $("#question_content").html(questions_contents);          //显示题目
         var options = course.questions[questions_index].branch_questions[0].options;   //拼凑答案选项
         var a_optons_split = options.split(";||;");  //分割选项。
         var html='';  //定义题目怎么显示
+        //显示道具
+        $(".loading_props").loading_props(type);
         //显示每一题的知识卡片
         $(".content_knowledge_cards").html(course.questions[questions_index].card_name);
         $("#card_of_knowledge").show_knowledge_card();
-        //显示道具
-        $(".loading_props").loading_props(type);
+
         switch(type){
             case 0:   //单选题
                 $("#question_content").options_sort(a_optons_split);//打乱顺序
                 $.each(a_optons_split, function( index, value ) {
                     var value1 = $("#question_option").filter_content(value);
                     if(value1.indexOf('.mp3') >= 0){
-                        html += '<li><input class="value_li_select" value="'+ value +'"/><div class="voice_choice">点击此处选择答案</div>' + value1 + '</li>';
+                        html +='<div class="listen_opt cf"><div class="tw_txt"><div class="tw_txt_check"><div class="tw_txt_check_pot"></div><input class="value_li_select" value="'+ value +'"/></div></div>'
+                        + value1 +'</div>';
+                    }else if(value1.indexOf('.jpg') >= 0){
+                        html +='<div class="pic_picker">'+ value1 +'<div class="tw_txt_check"><div class="tw_txt_check_pot"></div></div><input class="value_li_select"value="'
+                        + value +'"/></div>';
                     }else{
-                        html += '<li><input class="value_li_select" value="'+ value +'"/>' + value1 + '</li>';
+                        html +='<div class="tw_txt"><input class="value_li_select"value="'
+                        + value +'"/><div class="tw_txt_check"><div class="tw_txt_check_pot"></div></div><span>'+ value1 +'</span></div>'
                     }
                 });
                 //显示答案选项
@@ -245,9 +256,14 @@ $(document).ready(function(){
                 $.each(a_optons_split, function( index, value ) {
                     var value1 = $("#question_option").filter_content(value);
                     if(value1.indexOf('.mp3') >= 0){
-                        html += '<li><input class="value_li_select" value="'+ value +'"/><div class="voice_choice">点击此处选择答案</div>' + value1 + '</li>';
+                        html +='<div class="listen_opt cf"><div class="tw_txt"><div class="tw_txt_check"><div class="tw_txt_check_pot"></div>'
+                        + value1 +'<input class="value_li_select" value="'+ value +'"/></div></div>';
+                    }else if(value1.indexOf('.jpg') >= 0){
+                        html +='<div class="pic_picker">'+ value1 +'<div class="tw_txt_check"><div class="tw_txt_check_pot"></div></div><input class="value_li_select"value="'
+                        + value +'"/></div>';
                     }else{
-                        html += '<li><input class="value_li_select" value="'+ value +'"/>' + value1 + '</li>';
+                        html +='<div class="tw_txt"><input class="value_li_select"value="'
+                        + value +'"/><div class="tw_txt_check"><div class="tw_txt_check_pot"></div></div><span>'+ value1 +'</span></div>'
                     }
                 });
                 //显示答案选项
@@ -270,52 +286,63 @@ $(document).ready(function(){
                 $("#question_content").options_sort(arr2);
                 $.each(arr1,function(index1,value1){
                     var value1_html = $("#question_content").filter_content(value1);
-                    html += '<div class="ligature_two"><div class="ligature_option_left" value1="' + value1 + '">'+value1_html+'</div>';
+                    html += '<div class="qst_option cf"><div class="ligature_option_left" st="lx_img" value1="' + value1 + '">'
+                    +value1_html+'<div class="hide_options"></div><div class="lx_img_bor"></div><div class="lx_img_txt"></div></div>';
                     $.each(arr2,function(index2,value2){
                         if(index1==index2){
                             var value2_html = $("#question_content").filter_content(value2);
-                            html +='<div class="hide_options"></div><br/><br/><br/><div class="ligature_option_right" index="' + index2 + '" value2="' + value2 +'">'+value2_html+'</div></div>';
+                            if(value2_html.indexOf("<img")>=0){
+                                html += '<div is_img="shi" class="ligature_option_right" st="lx_img" value2="' + value2 + '">'
+                                +value2_html+'<div class="lx_img_bor"></div></div></div>';
+                            }else{
+                                html +='<div class="ligature_option_right" st="lx_txt" value2="'+ value2 +'">'
+                                + value2_html +'</div></div>'
+                            }
                         }
                     });
                 });
                 $("#question_option").html(html);
                 $("#question_option").connection_effect(arr1_left);
+
                 break;
             case 7: //拖拽提
-                $("#question_content").html($("#question_content").html().replace(/\[\[text\]\]/g,"<div class='vacancies_blank'>__________</div>"));
+                $("#question_content").html($("#question_content").html().replace(/\[\[text\]\]/g,'<input class="tk_txt" type="text"/>'));
                 $("#question_option").options_sort(a_optons_split);
                 $.each(a_optons_split,function(index,value){
                     $("#question_content").filter_content(value);
-                    html += '<div class="fillin_blank_option" index_blanks="'+index+'">'+ value +'</div>';
+                    html +='<div class="ty_box"><input class="ty_block"value="'+ value +'"/></div>'
                 });
                 $("#question_option").html(html);
                 $("#question_option").drag_mention();
                 break;
             case 3: //排序题
                 $("#question_option").options_sort(a_optons_split);
-                html = '<input type="button" id="revert_sorting" value="还原"/>'
+                html = '<button class="revert_sorting">还原</button>'
+                var html_black='';
                 $.each(a_optons_split,function(index){
-                    html += '<div class="vacancies_blank" index_blanks="'+index+'">__________</div>';
+                    html_black += '<div class="sort_block" index_blanks="'+index+'">__________</div>';
                 })
+                html +='<div class="sort_box">'+ html_black +'<hr /></div>'
                 $.each(a_optons_split,function(index,value){
                     $("#question_content").filter_content(value);
-                    html += '<div class="fillin_blank_option" index_blanks="'+index+'">'+ value +'</div>';
+                    html += '<div class="fillin_blank_option sort_block" index_blanks="'+index+'">'+ value +'</div>';
                 });
                 $("#question_option").html(html);
                 $("#question_option").sequence_revert();
                 break;
             case 5: //语音输入题
-                html = '<div><input type="button" value="点击输入语音" name="input_voice"></div>'
+                html = '<div class="yy_icon"></div>';
                 $("#question_option").html(html);
                 break;
             case 2: // 完形填空s.mach(/\[\[text\]\]/)
-                $("#question_content").html($("#question_content").html().replace(/\[\[text\]\]/g,"<div class='vacancies_blank'><a class='a_vacancies_blank' href='#'>__________</a><ul class='blank_options'></ul></div>"));
-                $(".blank_options").each(function(index){
+                $("#question_content").html($("#question_content").html().replace(/\[\[text\]\]/g,"<div class='wxtk_box'><input class='tk_txt' type='text' /><div class='wxtk_opt_box'></div></div>"));
+                $(".wxtk_opt_box").each(function(index){
                     options = course.questions[questions_index].branch_questions[index].options;
                     a_optons_split = options.split(";||;");
                     $("#question_content").options_sort(a_optons_split);//打乱顺序
+                    html = '<span class="wxtk_opt_cor"></span>'
                     $.each(a_optons_split,function(index,value){
-                        html += '<li class="blank_options_li" index_li="'+ index +'">'+ value +'</li>';
+                        html += '<li class="wxtk_opt">'+ value +'</li>';
                     })
                     $(this).html(html);
                     html = "";
@@ -325,7 +352,7 @@ $(document).ready(function(){
                 break;
             case 8: //填空题
                 $("#question_content").html($("#question_content").html().replace(/\[\[text\]\]/g,
-                    "<div class='vacancies_blank'><input type='text' name='fill_in_blanks' value='__________' style='border-style:none;color:blue;'/></div>"));
+                    '<input class="tk_txt" type="text" />'));
                 $("#question_option").html(html);
                 $("#question_content").fill_in_blanks();
                 break;
@@ -339,12 +366,22 @@ $(document).ready(function(){
                     $("#question_option").options_sort(branch_option);
                     //拼凑小题选项
                     $.each(branch_option,function(index,value){
-                        html_opton += '<li>' + value + '</li>';
+                        var value1 = $("#question_option").filter_content(value);
+                        if(value1.indexOf('.mp3') >= 0){
+                            html_opton +='<div class="listen_opt cf"><div class="tw_txt"><div class="tw_txt_check"><div class="tw_txt_check_pot"></div>'
+                            + value1 +'<input class="value_li_select" value="'+ value +'"/></div></div>';
+                        }else if(value1.indexOf('.jpg') >= 0){
+                            html_opton +='<div class="pic_picker">'+ value1 +'<div class="tw_txt_check"><div class="tw_txt_check_pot"></div></div><input class="value_li_select"value="'
+                            + value +'"/></div>';
+                        }else{
+                            html_opton +='<div class="tw_txt"><input class="value_li_select"value="'
+                            + value +'"/><div class="tw_txt_check"><div class="tw_txt_check_pot"></div></div><span>'+ value1 +'</span></div>'
+                        }
                     });
                     switch(branch_question_types){
                         case 0: //单选
                             html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
-                            + value.branch_content +'</div><div class="branch_option_one"><ul>' + html_opton + '<ul></div></li>';
+                            + value.branch_content +'</div><div class="branch_option_one">' + html_opton + '</div></li>';
                             break;
                         case 1: //多选
                             html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
@@ -352,7 +389,7 @@ $(document).ready(function(){
                             break;
                         case 5: //语音
                             html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
-                            + value.branch_content +'</div><div><input type="button" value="点击输入语音" name="input_voice"></div></li>';
+                            + value.branch_content +'</div><div class="yy_icon"></div></li>';
                             break;
                         case 8: //填空
                             html += '<li class="multiple_choice" index_li="'+ index +'"><div class="question_branch_content">'
@@ -364,13 +401,29 @@ $(document).ready(function(){
                 });
                 $("#question_option").html(html);
                 $("#question_option").html($("#question_option").html().replace(/\[\[text\]\]/g,
-                    "<div class='vacancies_blank'><input type='text' name='fill_in_blanks' value='__________' style='border-style:none;color:blue;'/></div>"));
+                    '<input class="tk_txt" type="text" />'));
                 $("#question_option").comprehensive_questions();
                 break;
             default:
                 break;
         }
     };
+    //点击显示隐藏的道具功能
+    $.fn.pro_showorhide = function(){
+        $(".help").click(function(){
+            $(this).find(".help_tit").toggle();
+        });
+
+        $(".help_box_1").click(function(){
+            $(".help_box_2").show();
+            $(".help_box_bg").show();
+        });
+
+        $(".help_box_bg").click(function(){
+            $(".help_box_2").hide();
+            $(".help_box_bg").hide();
+        })
+    }
 
     //数据提交到andriod端并关闭答题界面
     $.fn.complete_submission_data =  function(){
@@ -400,75 +453,93 @@ $(document).ready(function(){
     //综合题
     $.fn.comprehensive_questions =  function(){
         //单选选择题
-        $(".branch_option_one li").click(function(){
+
+        //文字选择题或者语音选择题
+        $(".branch_option_one .tw_txt").click(function(){
             var index_li = $(this).parents("li").attr("index_li");
-            arr_complex[index_li] = $(this).html();
-            $(".branch_option_one").find("li").css({
-                color: "#000000",
-                background: "white"
-            })
-            $(this).css({
-                color: "#ff0011",
-                background: "blue"
-            });
+            $(".tw_txt").removeClass("current");
+            $(this).addClass("current");
+            arr_complex[index_li] = $(this).find("input").val();
         });
-        //多选题
-        $(".branch_option_maney li").click(function(){
+        // 图片选择题
+        $(".branch_option_one.pic_picker").click(function(){
+            var index_li = $(this).parents("li").attr("index_li");
+            $(".pic_picker").removeClass("current");
+            $(this).addClass("current");
+            arr_complex[index_li] = $(this).find("input").val();
+        });
+        //多选题 文字或者语音
+        $(".branch_option_maney .tw_txt").click(function(){
             //获取多选题的下标
             var index_li = $(this).parents("li").attr("index_li");
             //通过下标找到options
             var options = course.questions[questions_index].branch_questions[index_li].options;
             var this_a = options.split(";||;");
-            var option_class = $(this).attr('class');
-            if(option_class=="choice"){
-                $(this).removeAttr("class");
-                $(this).css({
-                    color: "#000000",
-                    background: "white"
-                });
+            if($(this).attr("class").indexOf("current")>=0){
+                $(this).removeClass("current");
             }else{
-                $(this).addClass("choice");
-                $(this).css({
-                    color: "#ff0011",
-                    background: "blue"
-                });
+                $(this).addClass("current");
             }
-            //获取每个li标签下的值  根据获得json数据中的顺序，循环遍历找出被选中的选项。
-            arr_complex[index_li] = null
+            arr_complex[index_li] = null;
             $.each(this_a,function(index,value){
                 if (arr_complex[index_li] == null){
-                    $('.choice').map(function(){
-                        if(value == $(this).text()){
+                    $('.current').map(function(){
+                        if(value == $(this).find("input").val()){
                             arr_complex[index_li] =  value;
                         }
                     });
                 }else{
-                    $('.choice').map(function(){
-                        if(value == $(this).text()){
+                    $('.current').map(function(){
+                        if(value == $(this).find("input").val()){
                             arr_complex[index_li] += ';||;' + value;
                         }
                     });
                 }
-            })
+            });
         });
-        $("input[name='input_voice']").click(function(){
+
+        //   多选题 图片选择题
+        $(".branch_option_maney .pic_picker").click(function(){
+            //获取多选题的下标
+            var index_li = $(this).parents("li").attr("index_li");
+            //通过下标找到options
+            var options = course.questions[questions_index].branch_questions[index_li].options;
+            var this_a = options.split(";||;");
+            if($(this).attr("class").indexOf("current")>=0){
+                $(this).removeClass("current");
+            }else{
+                $(this).addClass("current");
+            }
+            param_content = null;
+            $.each(this_a,function(index,value){
+                if (param_content == null){
+                    $('.current').map(function(){
+                        if(value == $(this).find("input").val()){
+                            param_content =  value;
+                        }
+                    });
+                }else{
+                    $('.current').map(function(){
+                        if(value == $(this).find("input").val()){
+                            param_content += ';||;' + value;
+                        }
+                    });
+                }
+            })
+            alert(param_content);
+        });
+
+        $(".yy_icon").click(function(){
             var index_li = $(this).parents("li").attr("index_li");
             arr_complex[index_li] = "has";
+            alert(arr_complex[index_li]);
         });
         // 填空题
-        //点击的时候清除掉input中的内容
-        $("input[name='fill_in_blanks']").click(function(){
-            $(this).val("");
-        });
-        //离开的时候判断如果没内容则显示__________
-        $("input[name='fill_in_blanks']").blur(function(){
+        $(".tk_txt").blur(function(){
             var index_li = $(this).parents("li").attr("index_li");
-            if($(this).val()==""){
-                $(this).val("__________");
-            }
             //获取到每个空格中所填的内容
-            $("input[name='fill_in_blanks']").each(function(index){
-                if($("input[name='fill_in_blanks']").index(index) == 0){
+            $(".tk_txt").each(function(index){
+                if($(".tk_txt").index(index) == 0){
                     arr_complex[index_li] = $(this).val();
                 }else{
                     arr_complex[index_li] += ';||;' + $(this).val();
@@ -478,16 +549,10 @@ $(document).ready(function(){
     }
     //填空题
     $.fn.fill_in_blanks = function(){
-        $("input[name='fill_in_blanks']").click(function(){
-            $(this).val("");
-        });
-        $("input[name='fill_in_blanks']").blur(function(){
-            if($(this).val()==""){
-                $(this).val("__________");
-            }
+        $(".tk_txt").blur(function(){
             //获取到每个空格中所填的内容
-            $("input[name='fill_in_blanks']").each(function(index){
-                if($("input[name='fill_in_blanks']").index(index) == 0){
+            $(".tk_txt").each(function(index){
+                if($(".tk_txt").index(index) == 0){
                     param_content = $(this).val();
                 }else{
                     param_content += ';||;' + $(this).val();
@@ -576,21 +641,33 @@ $(document).ready(function(){
             name:"加血",
             applicable_questions:'0,1,2,3,4,5,6,7,8'
         }];
+        var html_help_box_1 = '';
         $.each(objs,function(index,value){
             if(daily_tasks&value.id==2){
                 return true;
             }
             var arrt_questions_type = value.applicable_questions.split(",");
+            
             $.each(arrt_questions_type,function(index){
                 if(arrt_questions_type[index]==type){
+                    var  dj_id = "dj_" + value.id;
+                    var  help_id = "help_"+value.id;
+                    html_help_box_1 +='<div class="help '+ help_id +'"></div>';
                     if(value.count>0){
-                        html += '<div onclick="use_of_props(this)" class="prop_show" style_class="highlighted" prop_id="' +  value.id + '" applicable_questions="'+ value.applicable_questions +'"><img src="' + 'img/' + value.name+ '.jpg' + '"/></div>';
+                        html += '<div onclick="use_of_props(this)" class="help '+ help_id +'" style_class="highlighted" prop_id="'
+                        +  value.id + '" applicable_questions="'+ value.applicable_questions
+                        +'"><div class="'+ dj_id +'"></div><div class="h_num">'+ value.count +'</div></div>';
                     }else{
-                        html += '<div onclick="use_of_props(this)" class="prop_show" style_class="show_gloomy" prop_id="' +  value.id + '" applicable_questions="'+ value.applicable_questions +'"><img src="' + 'img/' + value.name+ '.jpg' + '"/></div>';
+                        html += '<div onclick="use_of_props(this)" class="help '+ help_id +'" style_class="show_gloomy" prop_id="'
+                        +  value.id + '" applicable_questions="'+ value.applicable_questions
+                        +'"><div class="'+ dj_id +'"></div><div class="h_num">'+ value.count +'</div></div>';
                     }
                 }
             });
         });
+        html_help_box_1 +='<div class="help help_5"></div>';
+        html += '<div class="help help_5"><div class="kc" id="knowledge_card_input"></div><div class="help_tit"><span class="help_tit_cor"></span>知识卡片</div></div>'
+        $(".help_box_1").html(html_help_box_1);
         $(".loading_props").html(html);
     }
     //使用道具方法
@@ -608,7 +685,25 @@ $(document).ready(function(){
             hour++;
             minutes=0;
         }
-        var time_val=hour+"时"+minutes+"分"+sec+"秒";
+        var hour_show;
+        var minutes_show;
+        var sec_show;
+        if(hour<10){
+            hour_show = "0"+hour;
+        }else{
+            hour_show = hour;
+        }
+        if(minutes<10){
+            minutes_show = "0"+minutes
+        }else{
+            minutes_show = minutes;
+        }
+        if(sec<10){
+            sec_show = "0"+sec;
+        }else{
+            sec_show = sec;
+        }
+        var time_val=hour_show+":"+minutes_show+":"+sec_show;
         $(".loading_time").html(time_val);
         setTimeout('$(".loading_time").loading_time()',1000);
     }
@@ -617,7 +712,7 @@ $(document).ready(function(){
         //获取当前进度条的总长度
         var width = $(".load_blood").width();
         var width_blood = width/course.blood;
-        $("#progressbar").width(existing_blood*width_blood);
+        $(".progressbar").width(existing_blood*width_blood);
     }
 
     //点击显示知识卡片
@@ -625,6 +720,9 @@ $(document).ready(function(){
         $("#knowledge_card_input").click(function(){
             $(".knowledge_card_hidden").show();
         });
+        $(".close").click(function(){
+            $(".knowledge_card_hidden").hide();
+        })
         $("#collection_knowledge_cards").click(function(){
             $(".knowledge_card_hidden").hide();
         });
@@ -664,126 +762,89 @@ $(document).ready(function(){
     }
     //完形填空选择答案
     $.fn.cloze_choice_option = function(){
-        $(".a_vacancies_blank").click(function(){
-            $(".a_vacancies_blank").css({
-                color: "#000000",
-                background: "white"
-            })
-            $(this).css({
-                color: "#ff0011",
-                background: "blue"
-            });
-            $(".a_vacancies_blank").removeAttr("small_problem");
-            $(this).attr("small_problem","small_problem");
-            //获取到当前点击的div下标
-            var index = $(".a_vacancies_blank").index(this);
-            $(".blank_options").css({
-                display: "none"
-            })
-            $(".blank_options").eq(index).css({
-                display: "block"
-            });
+        $(".tk_txt").focus(function(){
+            $(this).parent().find(".wxtk_opt_box").show();
+        })
+        $(".wxtk_box input").blur(function(){
+            $(this).parent().find(".wxtk_opt_box").hide(500);
         });
         //点击具体小题选项
-        $(".blank_options_li").click(function(){
-            $('a[class="a_vacancies_blank"][small_problem="small_problem"]').html($(this).html());
-            $(".a_vacancies_blank").css({
-                color: "#000000",
-                background: "white"
-            });
-            $(".a_vacancies_blank").removeAttr("small_problem");
-            $(".blank_options").css({
-                display: "none"
-            });
+        $(".wxtk_opt").click(function(){
+            $(this).parents(".wxtk_box").children("input").val($(this).html());
+            $(".wxtk_opt_box").hide();
             //获取到每个空格中所填的内容
-            $(".a_vacancies_blank").each(function(index){
-                if($(".a_vacancies_blank").index(index) == 0){
-                    param_content = $(this).html();
+            $(".tk_txt").each(function(index){
+                if($(".tk_txt").index(index) == 0){
+                    param_content = $(this).val();
                 }else{
-                    param_content += ';=;' + $(this).html();
+                    param_content += ';=;' + $(this).val();
                 }
             });
+            alert(param_content);
         });
     }
     //拖拽提
     $.fn.drag_mention = function(){
         //加载该方法的时候默认选择第一个空格
-        $("div.vacancies_blank").eq(0).css({
-            color: "#ff0011",
-            background: "blue"
-        });
-        $("div.vacancies_blank").eq(0).attr("blanks","choice");
+        $(".tk_txt").eq(0).addClass("vacancies_blank");
+        $(".tk_txt").eq(0).attr("blanks","choice");
         //点击上面的空格做判断，如果该空格中的内容不是_____,则取到值，并在此替换
-        $(".vacancies_blank").click(function(){
-            $(".vacancies_blank").css({   //  所有class变为白色
-                color: "#000000",
-                background: "white"
-            });
-            $(this).css({       //当前样式便会被选中
-                color: "#ff0011",
-                background: "blue"
-            });
-            $(".vacancies_blank").removeAttr("blanks");  // 一处所有blanks属性
+        $(".tk_txt").click(function(){
+            //  所有class变为白色
+            $(".tk_txt").removeClass("vacancies_blank");
+            //当前样式便会被选中
+            $(this).addClass("vacancies_blank");
+            $(".tk_txt").removeAttr("blanks");  // 一处所有blanks属性
             $(this).attr("blanks","choice");   //给当前加上属性
-            if($(this).html()!='__________'){
-                $("div[class='fillin_blank_option']:contains('" + $(this).html() +"')").css({     //与选项内容相同的样式回复显示
-                    display: "block"
-                });
-                $(this).html("__________"); //显示当前被点击的初始内容
+            if($(this).val()!=''){
+                //与选项内容相同的样式回复显示
+                $("input[class='ty_block ty_block1'][value='" + $(this).val() +"']").removeClass("ty_block1");
+                $("input[class='ty_block'][value='" + $(this).val() +"']")[0].disabled = false;
+                $(this).val(""); //显示当前被点击的初始内容
             }
         });
-        $(".fillin_blank_option").click(function(){
-            $("div[class='fillin_blank_option']:contains('" +$("div[class='vacancies_blank'][blanks='choice']").html() +"')").css({     //与选项内容相同的样式回复显示
-                display: "block"
-            });
-            $("div[class='vacancies_blank'][blanks='choice']").html($(this).html());
-            $(this).css({
-                display: "none"
-            });
-            $("div[class='vacancies_blank'][blanks='choice']").css({
-                color: "#000000",
-                background: "red"
-            });
+        $(".ty_block").click(function(){
+            //与选项内容相同的样式回复显示
+            var choiced = $("input[blanks='choice']").val();
+            $("input[class='ty_block ty_block1'][value='"+ choiced +"']").removeClass("ty_block1");
+            //
+            if(choiced!=""){
+                $("input[class='ty_block'][value='"+choiced+"']")[0].disabled = false;
+            }
+            $("input[blanks='choice']").val($(this).val());
+            $(this).addClass("ty_block1");
+            $(this)[0].disabled = true;
             //给值到变量param_content中
             param_content = null;
-            $(".vacancies_blank").each(function(){
+            $(".tk_txt").each(function(){
                 if(param_content==null){
-                    param_content = $(this).html();
+                    param_content = $(this).val();
                 }else{
-                    param_content += ";||;"+$(this).html();
+                    param_content += ";||;"+$(this).val();
                 }
             })
+            alert(param_content);
         });
     };
     //排序题 排序，还原
     $.fn.sequence_revert = function(){
         var index = 0;
-        $("div.vacancies_blank").eq(index).css({
-            color: "#ff0011",
-            background: "blue"
-        });
-        $("div.vacancies_blank").eq(index).attr("blanks","choice");
+        $("div.sort_block").eq(index).addClass("vacancies_blank");
+        $("div.sort_block").eq(index).attr("blanks","choice");
         //点击排序
         $(".fillin_blank_option").click(function(){
-            $("div[class='vacancies_blank'][blanks='choice']").html($(this).html());
+            $("div[class='sort_block vacancies_blank'][blanks='choice']").html($(this).html());
             $(this).css({
                 display: "none"
             });
-            $("div[class='vacancies_blank'][blanks='choice']").css({
-                color: "#000000",
-                background: "red"
-            });
-            $("div[class='vacancies_blank'][blanks='choice']").removeAttr("blanks");
+            $("div[class='sort_block vacancies_blank'][blanks='choice']").removeAttr("blanks");
             index++;
-            $("div.vacancies_blank").eq(index).css({
-                color: "#ff0011",
-                background: "blue"
-            });
+            $("div.sort_block").eq(index).addClass("vacancies_blank");
             $("div.vacancies_blank").eq(index).attr("blanks","choice");
 
             //给值到变量param_content中
             param_content = null;
-            $(".vacancies_blank").each(function(){
+            $("div[class='sort_block vacancies_blank']").each(function(){
                 if(param_content==null){
                     param_content = $(this).html();
                 }else{
@@ -792,7 +853,7 @@ $(document).ready(function(){
             })
         });
         //还原排序
-        $("#revert_sorting").click(function(){
+        $(".revert_sorting").click(function(){
             $("#question_content").loading_title();
             param_content = null;
         });
@@ -801,109 +862,78 @@ $(document).ready(function(){
     //单项选择题。选择答案，背景颜色改变，并把答案放进param_content变量中。
     $.fn.choose_options_one = function(){
         //选择答案,把选择的答案保存到全局变量中去。
-        $("#question_option li").click(function(){
-            if($(this).html().indexOf('.mp3') < 0){
-                param_content = $(this).find("input").val();
-                alert(param_content);
-                $("#question_option").find("li").css({
-                    color: "#000000",
-                    background: "white"
-                })
-                $(this).css({
-                    color: "#ff0011",
-                    background: "blue"
-                });
-            }
+        //文字选择题或者语音选择题
+        $(".tw_txt").click(function(){
+            $(".tw_txt").removeClass("current");
+            $(this).addClass("current");
+            param_content = $(this).find("input").val();
         });
-        $(".voice_choice").click(function(){
-            param_content = $(this).prev().val();
-            alert(param_content);
-            $("#question_option").find("li").css({
-                color: "#000000",
-                background: "white"
-            });
-            $(this).parents("li").css({
-                color: "#ff0011",
-                background: "blue"
-            });
+        // 图片选择题
+        $(".pic_picker").click(function(){
+            $(".pic_picker").removeClass("current");
+            $(this).addClass("current");
+            param_content = $(this).find("input").val();
         });
+        $(".listen").click(function(){
+            $(this).find(".lis_src")[0].play();
+        })
     };
     //多选题，选择答案
     $.fn.choose_options_maney = function(){
         //获取选项并拆分成数组
         var options = course.questions[questions_index].branch_questions[0].options;
         var this_a = options.split(";||;");
-        $("#question_option li").click(function(){
-            //如果已经被选中，点击取消选中，如果没被选中点击被选中根据class=“choice”
-            if($(this).html().indexOf('.mp3') < 0){
-                var option_class = $(this).attr('class');
-                if(option_class=="choice"){
-                    $(this).removeAttr("class");
-                    $(this).css({
-                        color: "#000000",
-                        background: "white"
-                    });
-                }else{
-                    $(this).addClass("choice");
-                    $(this).css({
-                        color: "#ff0011",
-                        background: "blue"
-                    });
-                }
-            }
-            //获取每个li标签下的值  根据获得json数据中的顺序，循环遍历找出被选中的选项。
-            param_content = null
-            $.each(this_a,function(index,value){
-                if (param_content == null){
-                    $('.choice').map(function(){
-                        if(value == $(this).find("input").val()){
-                            param_content =  value;
-                        }
-                    });
-                }else{
-                    $('.choice').map(function(){
-                        if(value == $(this).find("input").val()){
-                            param_content += ';||;' + value;
-                        }
-                    });
-                }
-            })
-        });
-
-        //对于语音选项有特殊要求
-        $(".voice_choice").click(function(){
-            var option_class = $(this).parents("li").attr("class");
-            if(option_class=="choice"){
-                $(this).parents("li").removeAttr("class");
-                $(this).parents("li").css({
-                    color: "#000000",
-                    background: "white"
-                });
+        //文字选择题或者语音选择题
+        $(".tw_txt").click(function(){
+            if($(this).attr("class").indexOf("current")>=0){
+                $(this).removeClass("current");
             }else{
-                $(this).parents("li").addClass("choice");
-                $(this).parents("li").css({
-                    color: "#ff0011",
-                    background: "blue"
-                });
+                $(this).addClass("current");
             }
-            param_content = null
+            param_content = null;
             $.each(this_a,function(index,value){
                 if (param_content == null){
-                    $('.choice').map(function(){
+                    $('.current').map(function(){
                         if(value == $(this).find("input").val()){
                             param_content =  value;
                         }
                     });
                 }else{
-                    $('.choice').map(function(){
+                    $('.current').map(function(){
                         if(value == $(this).find("input").val()){
                             param_content += ';||;' + value;
                         }
                     });
                 }
             })
-        });
+            alert(param_content);
 
+        });
+        // 图片选择题
+        $(".pic_picker").click(function(){
+            if($(this).attr("class").indexOf("current")>=0){
+                $(this).removeClass("current");
+            }else{
+                $(this).addClass("current");
+            }
+            param_content = null;
+            $.each(this_a,function(index,value){
+                if (param_content == null){
+                    $('.current').map(function(){
+                        if(value == $(this).find("input").val()){
+                            param_content =  value;
+                        }
+                    });
+                }else{
+                    $('.current').map(function(){
+                        if(value == $(this).find("input").val()){
+                            param_content += ';||;' + value;
+                        }
+                    });
+                }
+            })
+            alert(param_content);
+        });
     }
     //选项随机排序
     $.fn.options_sort = function(option){
@@ -911,6 +941,39 @@ $(document).ready(function(){
             return Math.random()>0.5?1:-1;
         });
     };
+    //把题目中的图片或者音频过滤显示
+    $.fn.filter_question = function(text){
+        var html_text = "";
+        if(text.indexOf('<file>') >= 0){
+            var arr_text = text.split("<file>");
+            $.each(arr_text,function(index,value){
+                if(index%2 == 1){
+                    var file_text = value.split(".");
+                    if(daily_tasks){
+                        var url_prefix= course.questions[questions_index].prefix;
+                        if(file_text[1]=="mp3"){
+                            html_text += '<div class="listens"><div class="lis_icon"></div><audio class="lis_src" src="' + url_prefix + value + '" picture_name="' + value + '"></audio></div>';
+                        }else{
+                            html_text += '<div class="tw_pic"><img src="' + url_prefix + value + '"onload="if(this.width>this.height){if(this.width!=300)this.width=300; }else{if(this.height!=300) this.height=300;}"></img></div>';
+                        }
+                    }else{
+                        if(file_text[1]=="mp3"){
+                            html_text += '<div class="listens"><div class="lis_icon"></div><audio class="lis_src" src="' + value + '" picture_name="' + value + '"></audio></div>';
+                        }else{
+                            html_text += '<div class="tw_pic"><img src="' + value + '"onload="if(this.width>this.height){if(this.width!=300)this.width=300; }else{if(this.height!=300) this.height=300;}"></img></div>';
+                        }
+                    }
+                }
+                else{
+                    html_text += value;
+                }
+            })
+        }else{
+            html_text = text;
+        }
+        return html_text;
+
+    }
     //判断文本中是否存在文件
     $.fn.filter_content = function(text){
         var html_text = "";
@@ -922,15 +985,15 @@ $(document).ready(function(){
                     if(daily_tasks){
                         var url_prefix= course.questions[questions_index].prefix;
                         if(file_text[1]=="mp3"){
-                            html_text += '<div class="file_voice"><audio src="' + url_prefix + value + '" controls="controls" picture_name="' + value + '"></audio></div>';
+                            html_text += '<div class="listen"><div class="lis_icon"></div><audio class="lis_src" src="' + url_prefix + value + '" picture_name="' + value + '"></audio></div>';
                         }else{
-                            html_text += '<div class="file_img"><img src="' + url_prefix + value + '"onload="if(this.width>this.height){if(this.width!=300)this.width=300; }else{if(this.height!=300) this.height=300;}"></img></div>';
+                            html_text += '<div class="file_img"><img src="' + url_prefix + value + '"onload="if(this.width>this.height){if(this.width!=200)this.width=200; }else{if(this.height!=200) this.height=200;}"></img></div>';
                         }
                     }else{
                         if(file_text[1]=="mp3"){
-                            html_text += '<div class="file_voice"><audio src="' + value + '" controls="controls" picture_name="' + value + '"></audio></div>';
+                            html_text += '<div class="listen"><div class="lis_icon"></div><audio class="lis_src" src="' + value + '" picture_name="' + value + '"></audio></div>';
                         }else{
-                            html_text += '<div class="file_img"><img src="' + value + '"onload="if(this.width>this.height){if(this.width!=300)this.width=300; }else{if(this.height!=300) this.height=300;}"></img></div>';
+                            html_text += '<div class="file_img"><img src="' + value + '"onload="if(this.width>this.height){if(this.width!=200)this.width=200; }else{if(this.height!=200) this.height=200;}"></img></div>';
                         }
                     }
                 }
@@ -945,91 +1008,86 @@ $(document).ready(function(){
     };
     // 连线效果
     $.fn.connection_effect = function(arr1_left,arr2_right){
-        var  textorhtml="";
-        //点击左边判断
         $(".ligature_option_left").click(function(){
             //判断如果在右边有被选中的内容，则点击左边两边匹配
-            var has_selected = $("div[class='ligature_option_right'][id='selected_option']");
-            var index = has_selected.attr("index");
-            var value2 = has_selected.attr("value2");
-            if($(this).next().attr("index")==undefined){
-                if(has_selected.attr("id")==undefined){
-                    $(".ligature_option_left").removeAttr("id");
-                    $(this).attr("id","selected_option");
-                }else{         //如果右边没被选中则只判断自己这边
-                    //把被匹配的内容隐藏掉
+            var has_selected = $("#selected_option");    //如果某个元素被选中则加上selected_option
+            //判断如果没有匹配到值
+            if($(this).find("div[class='lx_img_txt']").attr("value2")==undefined){
+                //如果选中右边
+                if(has_selected.attr("class")=="ligature_option_right current"){
+                    if(has_selected.attr("is_img")=='shi'){
+                        $(this).find("div[class='hide_options']").html(has_selected.html());
+                        $(this).find("div[class='hide_options']").show();
+                        $(this).find("div[class='lx_img_txt']").attr("value2",has_selected.attr("value2"));
+                    }else{
+                        $(this).find("div[class='lx_img_txt']").attr("value2",has_selected.attr("value2"));
+                        $(this).find("div[class='lx_img_txt']").html(has_selected.html());
+                        $(this).attr("name","current1");
+                    }
                     has_selected.css({
                         display: "none"
                     });
-                    textorhtml = has_selected.html();
-                    $(this).next().attr("index",index);
-                    $(this).next().attr("value2",value2);
-                    $(this).next().html(textorhtml);
+                    $(this).removeClass("current")
+                    has_selected.removeClass("current").removeAttr("id");
+                }else{                //如果没被选中
                     has_selected.removeAttr("id");
+                    has_selected.removeClass("current");
+                    $(this).attr("id","selected_option");
+                    $(this).addClass("current");
                 }
-            }else{
-                index = $(this).next().attr("index");
-                $("div[class='ligature_option_right'][index="+ index +"]").css({
-                    display: "block"
+            }else{       //如果已经连线了
+                $("div[class='ligature_option_right'][value2='"+$(this).find("div[class='lx_img_txt']").attr("value2")+"']").show();
+                $(this).find("div[class='lx_img_txt']").removeAttr("value2");
+                $(this).find("div[class='hide_options']").html("");
+                $(this).find("div[class='hide_options']").css({
+                    display: "none"
                 });
-                $(this).next().removeAttr("index");
-                $(this).next().removeAttr("value2");
-                $(this).next().html("");
+                $(this).removeAttr("id").removeAttr("name");
+                $(this).find("div[class='lx_img_txt']").html("");
             }
-            // 把已选择的集合放进param_content中var
             var lianxian;
             $.each(arr1_left,function(index,value){
-                //                var html_left = $("div[class='ligature_option_left']:contains('" + value +"')").html();
                 lianxian = $("div[class='ligature_option_left'][value1='"+ value +"']");
                 if(index == 0){
-                    param_content = lianxian.attr("value1") + ";=;" + lianxian.next().attr("value2");
+                    param_content = lianxian.attr("value1") + ";=;" + lianxian.find("div[class='lx_img_txt']").attr("value2");
                 }else{
-                    param_content += ";||;" + lianxian.attr("value1") + ";=;" + lianxian.next().attr("value2");
+                    param_content += ";||;" + lianxian.attr("value1") + ";=;" + lianxian.find("div[class='lx_img_txt']").attr("value2");
                 }
             })
         });
-        
-        //点击隐藏部分进行判断
-        $(".hide_options").click(function(){
-            if($(this).attr("index")==undefined){
-                alert(111111111);
-            }else{
-                var index = $(this).attr("index");
-                $("div[class='ligature_option_right'][index="+ index +"]").css({
-                    display: "block"
-                });
-                $(this).removeAttr("index");
-                $(this).removeAttr("value2");
-                $(this).html("");
-            }
-        })
-        //点击右边进行判断
+
+        //点击右边
         $(".ligature_option_right").click(function(){
-            var index = $(this).attr("index");
-            var value2 = $(this).attr("value2");
-            var has_selected = $("div[class='ligature_option_left'][id='selected_option']");
-            if(has_selected.attr("id")==undefined){
-                $(".ligature_option_right").removeAttr("id");
-                $(this).attr("id","selected_option");
-            }else{
+            var has_selected = $("#selected_option");    //如果某个元素被选中则加上selected_option
+            if(has_selected.attr("class")=="ligature_option_left current"){
+                if($(this).attr("is_img")=="shi"){
+                    $(this).css({
+                        display: "none"
+                    });
+                    has_selected.find("div[class='hide_options']").html($(this).html());
+                    has_selected.find("div[class='hide_options']").show();
+                    has_selected.find("div[class='lx_img_txt']").attr("value2",$(this).attr("value2"));
+                }else{
+                    has_selected.find("div[class='lx_img_txt']").attr("value2",$(this).attr("value2"));
+                    $("#selected_option").find("div[class='lx_img_txt']").html($(this).html());
+                    $("#selected_option").attr("name","current1");
+                }
+                $("#selected_option").removeAttr("id").removeClass("current");
                 $(this).css({
                     display: "none"
                 });
-                textorhtml = $(this).html();
-                has_selected.next(".hide_options").attr("index",index);
-                has_selected.next(".hide_options").attr("value2",value2);
-                has_selected.next(".hide_options").html(textorhtml);
-                has_selected.removeAttr("id");
+            }else{
+                $(".ligature_option_right").removeAttr("id").removeClass("current");
+                $(this).addClass("current").attr("id","selected_option");
             }
-
             var lianxian;
             $.each(arr1_left,function(index,value){
                 //                var html_left = $("div[class='ligature_option_left']:contains('" + value +"')").html();
                 lianxian = $("div[class='ligature_option_left'][value1='"+ value +"']");
                 if(index == 0){
-                    param_content = lianxian.attr("value1") + ";=;" + lianxian.next().attr("value2");
+                    param_content = lianxian.attr("value1") + ";=;" + lianxian.find("div[class='lx_img_txt']").attr("value2");
                 }else{
-                    param_content += ";||;" + lianxian.attr("value1") + ";=;" + lianxian.next().attr("value2");
+                    param_content += ";||;" + lianxian.attr("value1") + ";=;" + lianxian.find("div[class='lx_img_txt']").attr("value2");
                 }
             })
         })
@@ -1066,18 +1124,25 @@ function use_of_props(obj){
                 //                    dataType:'text',
                 //                    success:function(data){
                 //                        if(data=="success"){
-
                 //道具效果
+
                 var answer = course.questions[questions_index].branch_questions[0].answer;
                 var type = course.questions[questions_index].question_types;   //获取题目类型
                 //根据道具类型分类，达到每种道具的使用效果
-                alert(type);
                 switch(prop_id){
                     //去错卡
                     case '1':
                         if(type==0){
-                            $("#question_option").find("li").each(function(){
-                                alert($(this).find("input").val());
+                            $("#question_option").find(".tw_txt").each(function(){
+                                if($(this).find("input").val()!=answer){
+                                    $(this).css({
+                                        color: "#000000",
+                                        background: "red"
+                                    });
+                                    return false;
+                                }
+                            });
+                            $("#question_option").find(".pic_picker").each(function(){
                                 if($(this).find("input").val()!=answer){
                                     $(this).css({
                                         color: "#000000",
@@ -1102,21 +1167,44 @@ function use_of_props(obj){
                     //作弊卡
                     case '3':
                         var arr_answer = answer.split(";||;")
+                        var options = course.questions[questions_index].branch_questions[0].options;
+                        var this_a = options.split(";||;");
                         if(type==1){
-                            $("#question_option").find("li").each(function(){
+                            $("#question_option").find(".tw_txt").each(function(){
                                 if($.inArray($(this).find("input").val(),arr_answer)>=0){
-                                    if($(this).attr("class")=="choice"){
+                                    if($(this).attr("class")=="tw_txt current"){
                                         return true;
                                     }
-                                    $(this).addClass("choice");
-                                    $(this).css({
-                                        color: "#ff0011",
-                                        background: "blue"
-                                    });
+                                    $(this).addClass("current");
+                                    return false;
+                                }
+                            });
+                            $("#question_option").find(".pic_picker").each(function(){
+                                if($.inArray($(this).find("input").val(),arr_answer)>=0){
+                                    if($(this).attr("class")=="tw_txt current"){
+                                        return true;
+                                    }
+                                    $(this).addClass("current");
                                     return false;
                                 }
                             });
                         }
+                        param_content = null;
+                        $.each(this_a,function(index,value){
+                            if (param_content == null){
+                                $('.current').map(function(){
+                                    if(value == $(this).find("input").val()){
+                                        param_content =  value;
+                                    }
+                                });
+                            }else{
+                                $('.current').map(function(){
+                                    if(value == $(this).find("input").val()){
+                                        param_content += ';||;' + value;
+                                    }
+                                });
+                            }
+                        })
                         frequency_use_props++;
                         break;
                     //医疗卡
@@ -1130,7 +1218,7 @@ function use_of_props(obj){
                             existing_blood++;
                             frequency_use_props++;
                             alert(existing_blood);
-                            $("#progressbar").load_control_blood();
+                            $(".progressbar").load_control_blood();
                         }
                         break;
                     default:

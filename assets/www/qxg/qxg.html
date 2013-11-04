@@ -34,34 +34,43 @@
     <![endif]-->
     </HEAD>
     <BODY>
-        <div class="load_all">
-            <div class="loading_time"></div>
-            <div class="loading_props_blood">
-                <div class="load_blood"style='width:410px;height:18px;background-color:#FFFAF0'>
-                    <div id='progressbar' style='width:410px;height:18px;background-color:#00FFFF'></div>
-                </div>
+    <header>
+    </header>
+    <article class="main_content">
+        <header class="qst_header">
+            <div class="time_icon">time</div>
+            <div class="loading_time">08:33</div>
+            <div class="life_icon">life</div>
+            <div class="load_blood">
+                <div class='progressbar' style="width: 100px;"></div>
             </div>
-            <div class="loading_props"></div>
-            <div class="load_topics">
-                <div id="question_content"></div>
-                <div id="card_of_knowledge">
-                    <input type="button" value="知识卡片" id="knowledge_card_input"/>
-                    <div class="knowledge_card_hidden">
-                        <div class="content_knowledge_cards"></div>
-                        <input type="button" value="收藏" id="collection_knowledge_cards"/>
-                    </div>
-                </div>
-                <div id="question_option">
-                    <ul id="option_select" style="list-style-type: upper-latin"></ul>
-                </div>
-                <input type="button" value="核对" id="loaddata" />
-                <div></div>
+        </header>
+        <article class="qst_con">
+            <h1 id="question_content"></h1>
+            <div id="question_option" class="qst_box">
             </div>
-        </div>
+            <div class="help_box help_box_1">
+            </div>
+            <div class="loading_props help_box help_box_2">
+            </div>
 
-    </BODY>
+
+            <div class="knowledge_card_hidden center_div">
+                <span class="close">关闭</span>
+                <div class="content_knowledge_cards"></div>
+                <input type="button" value="收藏" id="collection_knowledge_cards" class="revert_sorting"/>
+            </div>
+
+            <div class="help_box_bg"></div>
+            <input type="button" value="核对" id="loaddata" class="revert_sorting"/>
+
+        </article>
+    </article>
+
+</BODY>
 </HTML>
 <script type="text/javascript">
+    //    var course;
     var questions_index = 0;  //题目下标
     var param_content;   //写入内容
     var question_total;  //总题数
@@ -71,5 +80,6 @@
     var sec=0;
     var frequency_use_props = 0;//判断是否使用道具
     var arr_complex = new Array();//取数组 定义一个数组把小题中的答案放进数组中  综合题中使用
+    var arr_number_props = new Array()                   //道具数量
     var daily_tasks = false;  //判断是不是每日任务
 </script>
