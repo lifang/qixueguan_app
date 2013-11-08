@@ -2,30 +2,63 @@
     PUBLIC "-//W3C//DTD HTML 5.0 Transitional//EN">
 <HTML>
     <HEAD>
-    	<meta charset="utf-8"/>
-		<link rel="stylesheet" href="css/style.css" />
+		<meta charset="utf-8"/>
+        <script src="js/jquery-v1.9.0.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                var aaaa ="json/course.js";
+                var bbbb ="js/qxg_plug-in.js";
+                getScript([aaaa,bbbb],function(){
+                })
+            })
+            function getScript(obj, callback) {
+                var arr = obj,
+                timeout;
+                function add() {
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    if (arr.length >= 1) {
+                     
+                        if (script.readyState) {
+                            script.onreadystatechange = function () {
+                                if (script.readyState === 'loaded' || script.readyState === 'complete') {
+                                    script.onreadystatechange = null;
+                                    arr.shift();
+                                    timeout = setTimeout(add, 1);
+                                }
+                            }
+                        } else {
+                            script.onload = function () {
+                                arr.shift();
+                                timeout = setTimeout(add, 1);
+                            }
+                        }
+                        script.src = arr[0];
+                        if(script.src.indexOf("course.js")>=0){
+                            script.innerHTML='var course;';
+                        }
+                        var header = document.getElementsByTagName("head")[0];
+                        header.appendChild(script);
+                    } else {
+                        clearTimeout(timeout);
+                        callback();
+                    }
+                }
+                add();
+            }
+        </script>
+
+        <link rel="stylesheet" href="css/style.css" />
         <TITLE> New Document </TITLE>
-        <META http-equiv="Access-Control-Allow-Origin" content="*">
+        <META http-equiv="Access-Control-Allow-Origin" content="*"/>
         <META NAME="Generator" CONTENT="EditPlus">
         <META NAME="Author" CONTENT="">
         <META NAME="Keywords" CONTENT="">
         <META NAME="Description" CONTENT="">
-        <script src="js/jquery-v1.9.0.js"></script>
-		
-        <script type="text/javascript">
-		   var course;
-		   var oHead = document.getElementsByTagName('HEAD').item(0); 
-           var script = document.createElement("script");
-			script.type = "text/javascript";
-			script.src = "json/course.js";  //获取到的值
-			oHead.appendChild(script);   
 
-			//$(document).ready(function(){window.setTimeout(function(){alert(course)},3)})	
-        </script>
-       
-        <script src="js/qxg_plug-in.js"></script>
-		
-        
+        <link rel=shortcut icon href=favicon.ico>
+        <!-- 文档的头部区域的兼容性写法 -->
+        <link rel=apple-touch-icon href=custom_icon.png>
         <!--[if IE 6]>
     <script src="js/DD_belatedPNG_0.0.8a-min.js"></script>
     <script>
@@ -53,24 +86,35 @@
             </div>
             <div class="loading_props help_box help_box_2">
             </div>
-
-
             <div class="knowledge_card_hidden center_div">
                 <span class="close">关闭</span>
                 <div class="content_knowledge_cards"></div>
-                <input type="button" value="收藏" id="collection_knowledge_cards" class="revert_sorting"/>
+                <div style="text-align:center;">
+                    <input type="button" value="收藏" id="collection_knowledge_cards" class="revert_sorting" />
+                </div>
             </div>
 
             <div class="help_box_bg"></div>
             <input type="button" value="核对" id="loaddata" class="revert_sorting"/>
-
         </article>
     </article>
-
+    <div class="second_bg"></div>
+    <div class="second_box">
+        <div class="second_content">
+            <div class="sgt">
+                <span class="close">关闭</span>
+                <div id="sgt_content" style="text-align:center;"></div>
+                <div style="text-align:center;">
+                    <input type="button" value="确定" name="guanbi" class="revert_sorting"/>
+                    <input type="button" value="取消" name="guanbi" class="revert_sorting"/>
+                </div>
+            </div>
+        </div>
+    </div>
 </BODY>
 </HTML>
 <script type="text/javascript">
-    //    var course;
+
     var questions_index = 0;  //题目下标
     var param_content;   //写入内容
     var question_total;  //总题数
@@ -82,4 +126,5 @@
     var arr_complex = new Array();//取数组 定义一个数组把小题中的答案放进数组中  综合题中使用
     var arr_number_props = new Array()                   //道具数量
     var daily_tasks = false;  //判断是不是每日任务
+    var sgt_content;  //提示信息
 </script>

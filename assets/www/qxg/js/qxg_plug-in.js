@@ -1,218 +1,3 @@
-$(document).ready(function(){
-    //    jQuery.noConflict();
-    //定义变量（值从 安卓端获取）
-    //    daily_tasks = true;
-    //如果是每日任务则请求后台获取json
-    if(daily_tasks){
-        //获取每日任务参数
-        $.ajax({
-            cache: false,
-            async: false,
-            crossDomain: true,
-            type: 'get',
-            url:"http://192.168.0.112:3000/api/user_manages/everyday_tasks",
-            data:{
-                uid : 3,
-                course_id : 1
-            },
-            dataType:'json',
-            success:function(data){
-                if(data.status==1){
-                    alert("用户暂无任务，请先完成更多的关卡挑战");
-                }else if(data.status==0){
-                    alert("已获取到json");
-                    course = data;
-                }
-            }
-        });
-        
-
-    //        course = {
-    //            "course_id":1,
-    //            "chapter_id":2,
-    //            "round_id":3,
-    //            "question_count":1,
-    //            "blood":4,
-    //            "points_score":100,
-    //            "specified_time":10000,
-    //            "questions":[
-    //
-    //            {
-    //                "question_id":2,
-    //                "content":"2多选题，此题可以选择多个答案<file>English.wav</file>",
-    //                "question_types":1,
-    //                "branch_questions":[{
-    //                    "branch_content":"鸟毛",
-    //                    "options":"one;||;two;||;three",
-    //                    "answer":"one;||;two"
-    //                },
-    //
-    //                {
-    //                    "branch_content":"鸟蛋",
-    //                    "options":"one;||;two;||;three",
-    //                    "answer":"one;||;two"
-    //                }],
-    //                "card_id":1,
-    //                "card_name":"7听力生词",
-    //                "description":"knowledge n. 知识、学识",
-    //                "card_types":"词汇"
-    //            }]
-    //        }
-    }
-
-    //    //先对course  乱序
-    //    var course_questions = course.questions;
-    //    $(".question_content").options_sort(course_questions);//打乱顺序
-    //加载时间
-    $(".loading_props").pro_showorhide();
-
-    $(".loading_time").loading_time();
-    existing_blood = course.blood;
-    //加载血量
-    $("#question_content").load_control_blood();
-    //加载道具
-    $(".loading_props").loading_props();
-    //加载题目
-    $("#question_content").loading_title();
-    //加载收藏知识卡片方法
-    $("#collection_knowledge_cards").collection_knowledge_cards();
-    $(document).on('click',"input[id='loaddata']",function(){
-        var type = course.questions[questions_index].question_types;   //获取题目类型
-        var button = $(this);
-        switch(type){
-            case 0:
-            case 1:
-            case 3:
-            case 4:
-            case 5:
-            case 7:
-            case 8:
-                if(button.val()=="核对")
-                {
-                    if(param_content==null){
-                        alert("请先填写答案");
-                    }else{
-                        if(param_content==course.questions[questions_index].branch_questions[0].answer){
-                            alert("答对了");
-                            questions_index++;  //答题之后题目下标加一
-                        }
-                        else{
-                            alert("答错了");
-                            //加载收集错题方法
-                            //                            $("#question_content").collecting_wrong_questions();
-                            questions_index++;
-                            existing_blood--;
-                            if(existing_blood<=0){
-                                alert("没血了");
-                            //调用andriod方法结束答题
-                            }
-                            $(".progressbar").load_control_blood();
-                        //调用扣血的方法
-                        }
-                        button.val("下一题");
-                        param_content = null;
-                    }
-                }else
-                {
-                    button.val("核对");
-                    $("#question_content").loading_title();
-                    frequency_use_props = 0;
-                }
-                if(questions_index==course.question_count-1){
-                    //调用提交数据到andriod方法
-                    $(".question_content").complete_submission_data();
-                }
-                break;
-            case 2:
-                if(button.val()=="核对"){
-                    if(param_content==null){
-                        alert("请先填写答案");
-                    }else{
-                        var option_array = param_content.split(";=;");
-                        var trueorfalse = true;
-                        $.each(option_array, function(index){
-                            if(option_array[index] != course.questions[questions_index].branch_questions[index].answer){
-                                trueorfalse = false;
-                                return false;
-                            }
-                        });
-                        if(trueorfalse == true){
-                            alert("答对了");
-                            questions_index++;  //答题之后题目下标加一
-                        }else{
-                            alert("答错了");
-                            //加载收集错题方法
-                            //                            $("#question_content").collecting_wrong_questions();
-                            questions_index++;
-                            existing_blood--;
-                            if(existing_blood<=0){
-                                alert("没血了");
-                            //调用andriod方法结束答题
-                            }
-                            $(".progressbar").load_control_blood();
-                        }
-                        button.val("下一题");
-                        param_content = null;
-                    }
-                }else{
-                    button.val("核对");
-                    $("#question_content").loading_title();
-                    frequency_use_props = 0;
-                }
-                if(questions_index==course.question_count){
-                    //调用提交的方法
-                    //调用提交数据到andriod方法
-                    $(".question_content").complete_submission_data();
-                }
-                break;
-            case 6:
-                if(button.val()=="核对"){
-                    if(arr_complex==""){
-                        alert("请先填写答案");
-                    }else{
-                        var trueorfalse = true;
-                        var arr_anwser = course.questions[questions_index].branch_questions;
-                        $.each(arr_anwser,function(index){
-                            if(arr_anwser[index].answer!=arr_complex[index]){
-                                trueorfalse = false;
-                                return false;
-                            }
-                        })
-                        if(trueorfalse == true){
-                            alert("答对了");
-                            questions_index++;  //答题之后题目下标加一
-                        }else{
-                            alert("答错了");
-                            //加载收集错题方法
-                            //                            $("#question_content").collecting_wrong_questions();
-                            questions_index++;
-                            existing_blood--;
-                            if(existing_blood<=0){
-                                alert("没血了");
-                            //调用andriod方法结束答题
-                            }
-                            $(".progressbar").load_control_blood();
-                        }
-                        button.val("下一题");
-                        arr_complex = null;
-                    }
-                }else{
-                    button.val("核对");
-                    $("#question_content").loading_title();
-                    frequency_use_props = 0;
-                }
-                if(questions_index==course.question_count){
-                    //调用提交的方法
-                    //调用提交数据到andriod方法
-                    $(".question_content").complete_submission_data();
-                }
-                break;
-            default:
-                break;
-        }
-    })
-});
-
 //需要被调用到的jquery方法写在这里面
 (function($){
     //通过获取json中的问题类型加载不同题型
@@ -271,7 +56,7 @@ $(document).ready(function(){
                 //调用选择多选方法
                 $("#question_content").choose_options_maney();
                 break;
-    
+
 
             case 4: //连线题
                 var arr1 = new Array();//取数组
@@ -317,7 +102,7 @@ $(document).ready(function(){
                 break;
             case 3: //排序题
                 $("#question_option").options_sort(a_optons_split);
-                html = '<button class="revert_sorting">还原</button>'
+                html = '<button class="revert_sorting" id="revivification">还原</button>'
                 var html_black='';
                 $.each(a_optons_split,function(index){
                     html_black += '<div class="sort_block" index_blanks="'+index+'">__________</div>';
@@ -448,7 +233,7 @@ $(document).ready(function(){
             "specified_time":specified_time,
             "percent_time_correct":percent_time_correct
         }
-        window.demo.test(json_return);
+        window.demo.return_json(json_return);
     }
     //综合题
     $.fn.comprehensive_questions =  function(){
@@ -526,13 +311,11 @@ $(document).ready(function(){
                     });
                 }
             })
-            alert(param_content);
         });
 
         $(".yy_icon").click(function(){
             var index_li = $(this).parents("li").attr("index_li");
             arr_complex[index_li] = "has";
-            alert(arr_complex[index_li]);
         });
         // 填空题
         $(".tk_txt").blur(function(){
@@ -578,11 +361,14 @@ $(document).ready(function(){
             dataType:'text',
             success:function(data){
                 if(data=="added"){
-                    alert("错题已加载");
+                    sgt_content="错题已加载";
+                    $(".second_content").sgt_all(sgt_content);
                 }else if(data=="success"){
-                    alert("错题加载成功");
+                    sgt_content="错题加载成功";
+                    $(".second_content").sgt_all(sgt_content);
                 }else{
-                    alert("错题加载失败");
+                    sgt_content="错题加载失败";
+                    $(".second_content").sgt_all(sgt_content);
                 }
             }
         });
@@ -608,6 +394,7 @@ $(document).ready(function(){
     //                alert(arr_number_props[0].name);
     //            },
     //            error: function(){
+    //            sgt_content="请先填写答案";
     //                alert("error");
     //            }
     //        });
@@ -647,7 +434,7 @@ $(document).ready(function(){
                 return true;
             }
             var arrt_questions_type = value.applicable_questions.split(",");
-            
+
             $.each(arrt_questions_type,function(index){
                 if(arrt_questions_type[index]==type){
                     var  dj_id = "dj_" + value.id;
@@ -671,7 +458,7 @@ $(document).ready(function(){
         $(".loading_props").html(html);
     }
     //使用道具方法
-    
+
     //加载时间方法(时间改变)
     $.fn.loading_time = function(){
         sec++;
@@ -747,14 +534,18 @@ $(document).ready(function(){
                 dataType:'text',
                 success:function(data){
                     if(data=="success"){
-                        alert("收藏成功");
+                        sgt_content="收藏成功";
+                        $(".second_content").sgt_all(sgt_content);
                     }
                     else if(data=="added"){
-                        alert("已存在卡包中");
+                        sgt_content="已存在卡包中";
+                        $(".second_content").sgt_all(sgt_content);
                     }else if(data=="not_enough"){
-                        alert("卡槽容量不够");
+                        sgt_content="卡槽容量不够";
+                        $(".second_content").sgt_all(sgt_content);
                     }else{
-                        alert("收藏错误");
+                        sgt_content="收藏错误";
+                        $(".second_content").sgt_all(sgt_content);
                     }
                 }
             });
@@ -780,7 +571,6 @@ $(document).ready(function(){
                     param_content += ';=;' + $(this).val();
                 }
             });
-            alert(param_content);
         });
     }
     //拖拽提
@@ -823,7 +613,6 @@ $(document).ready(function(){
                     param_content += ";||;"+$(this).val();
                 }
             })
-            alert(param_content);
         });
     };
     //排序题 排序，还原
@@ -853,7 +642,7 @@ $(document).ready(function(){
             })
         });
         //还原排序
-        $(".revert_sorting").click(function(){
+        $("#revivification").click(function(){
             $("#question_content").loading_title();
             param_content = null;
         });
@@ -906,8 +695,6 @@ $(document).ready(function(){
                     });
                 }
             })
-            alert(param_content);
-
         });
         // 图片选择题
         $(".pic_picker").click(function(){
@@ -932,8 +719,23 @@ $(document).ready(function(){
                     });
                 }
             })
-            alert(param_content);
         });
+    }
+    //
+    $.fn.sgt_all = function(obj){
+        $("#sgt_content").html(obj);
+        $(".second_bg").show();
+        $(".second_box").show();
+    }
+    $.fn.close_sgt =  function(){
+        $('input[name="guanbi"]').click(function(){
+            $(".second_bg").hide();
+            $(".second_box").hide();
+        });
+        $(".close").click(function(){
+            $(".second_bg").hide();
+            $(".second_box").hide();
+        })
     }
     //选项随机排序
     $.fn.options_sort = function(option){
@@ -1095,15 +897,248 @@ $(document).ready(function(){
 
 })(jQuery)
 
+jQuery(document).ready(function(){
+    //    jQuery.noConflict();
+    //定义变量（值从 安卓端获取）
+    //    daily_tasks = true;
+    //如果是每日任务则请求后台获取json
+    if(daily_tasks){
+        //获取每日任务参数
+        $.ajax({
+            cache: false,
+            async: false,
+            crossDomain: true,
+            type: 'get',
+            url:"http://192.168.0.112:3000/api/user_manages/everyday_tasks",
+            data:{
+                uid : 3,
+                course_id : 1
+            },
+            dataType:'json',
+            success:function(data){
+                if(data.status==1){
+                    alert("用户暂无任务，请先完成更多的关卡挑战");
+                }else if(data.status==0){
+                    alert("已获取到json");
+                    course = data;
+                }
+            }
+        });
+        
+
+    //        course = {
+    //            "course_id":1,
+    //            "chapter_id":2,
+    //            "round_id":3,
+    //            "question_count":1,
+    //            "blood":4,
+    //            "points_score":100,
+    //            "specified_time":10000,
+    //            "questions":[
+    //
+    //            {
+    //                "question_id":2,
+    //                "content":"2多选题，此题可以选择多个答案<file>English.wav</file>",
+    //                "question_types":1,
+    //                "branch_questions":[{
+    //                    "branch_content":"鸟毛",
+    //                    "options":"one;||;two;||;three",
+    //                    "answer":"one;||;two"
+    //                },
+    //
+    //                {
+    //                    "branch_content":"鸟蛋",
+    //                    "options":"one;||;two;||;three",
+    //                    "answer":"one;||;two"
+    //                }],
+    //                "card_id":1,
+    //                "card_name":"7听力生词",
+    //                "description":"knowledge n. 知识、学识",
+    //                "card_types":"词汇"
+    //            }]
+    //        }
+    }
+
+    //    //先对course  乱序
+    //    var course_questions = course.questions;
+    //    $(".question_content").options_sort(course_questions);//打乱顺序
+    //加载时间
+    $(".loading_props").pro_showorhide();
+
+    $(".loading_time").loading_time();
+    existing_blood = course.blood;
+    //加载血量
+    $("#question_content").load_control_blood();
+    //加载道具
+    $(".loading_props").loading_props();
+    //加载题目
+    $("#question_content").loading_title();
+    //加载收藏知识卡片方法
+    $("#collection_knowledge_cards").collection_knowledge_cards();
+    //加载关闭提示方法
+    $(".second_content").close_sgt();
+    $(document).on('click',"input[id='loaddata']",function(){
+        var type = course.questions[questions_index].question_types;   //获取题目类型
+        var button = $(this);
+        switch(type){
+            case 0:
+            case 1:
+            case 3:
+            case 4:
+            case 5:
+            case 7:
+            case 8:
+                if(button.val()=="核对")
+                {
+                    if(param_content==null){
+                        sgt_content="请先填写答案";
+                        $(".second_content").sgt_all(sgt_content);
+                    }else{
+                        if(param_content==course.questions[questions_index].branch_questions[0].answer){
+                            sgt_content='答对了';
+                            $(".second_content").sgt_all(sgt_content);
+                            questions_index++;  //答题之后题目下标加一
+                        }
+                        else{
+                            sgt_content="答错了";
+                            $(".second_content").sgt_all(sgt_content);
+                            //加载收集错题方法
+                            //                            $("#question_content").collecting_wrong_questions();
+                            questions_index++;
+                            existing_blood--;
+                            if(existing_blood<=0){
+                                sgt_content="没血了";
+                                $(".second_content").sgt_all(sgt_content);
+                            //调用andriod方法结束答题
+                            }
+                            $(".progressbar").load_control_blood();
+                        //调用扣血的方法
+                        }
+                        button.val("下一题");
+                        param_content = null;
+                    }
+                }else
+                {
+                    button.val("核对");
+                    $("#question_content").loading_title();
+                    frequency_use_props = 0;
+                }
+                if(questions_index==course.question_count){
+                    //调用提交数据到andriod方法
+                    $(".question_content").complete_submission_data();
+                }
+                break;
+            case 2:
+                if(button.val()=="核对"){
+                    if(param_content==null){
+                        sgt_content="请先填写答案";
+                        $(".second_content").sgt_all(sgt_content);
+                    }else{
+                        var option_array = param_content.split(";=;");
+                        var trueorfalse = true;
+                        $.each(option_array, function(index){
+                            if(option_array[index] != course.questions[questions_index].branch_questions[index].answer){
+                                trueorfalse = false;
+                                return false;
+                            }
+                        });
+                        if(trueorfalse == true){
+                            sgt_content="答对了";
+                            $(".second_content").sgt_all(sgt_content);
+                            questions_index++;  //答题之后题目下标加一
+                        }else{
+                            sgt_content="答错了";
+                            $(".second_content").sgt_all(sgt_content);
+                            //加载收集错题方法
+                            //                            $("#question_content").collecting_wrong_questions();
+                            questions_index++;
+                            existing_blood--;
+                            if(existing_blood<=0){
+                                sgt_content="没血了";
+                                $(".second_content").sgt_all(sgt_content);
+                            //调用andriod方法结束答题
+                            }
+                            $(".progressbar").load_control_blood();
+                        }
+                        button.val("下一题");
+                        param_content = null;
+                    }
+                }else{
+                    button.val("核对");
+                    $("#question_content").loading_title();
+                    frequency_use_props = 0;
+                }
+                if(questions_index==course.question_count){
+                    //调用提交的方法
+                    //调用提交数据到andriod方法
+                    $(".question_content").complete_submission_data();
+                }
+                break;
+            case 6:
+                if(button.val()=="核对"){
+                    if(arr_complex==""){
+                        sgt_content="请先填写答案";
+                        $(".second_content").sgt_all(sgt_content);
+                    }else{
+                        var trueorfalse = true;
+                        var arr_anwser = course.questions[questions_index].branch_questions;
+                        $.each(arr_anwser,function(index){
+                            if(arr_anwser[index].answer!=arr_complex[index]){
+                                trueorfalse = false;
+                                return false;
+                            }
+                        })
+                        if(trueorfalse == true){
+                            sgt_content="答对了";
+                            $(".second_content").sgt_all(sgt_content);
+                            questions_index++;  //答题之后题目下标加一
+                        }else{
+                            sgt_content="答错了";
+                            $(".second_content").sgt_all(sgt_content);
+                            //加载收集错题方法
+                            //                            $("#question_content").collecting_wrong_questions();
+                            questions_index++;
+                            existing_blood--;
+                            if(existing_blood<=0){
+                                sgt_content="没血了";
+                                $(".second_content").sgt_all(sgt_content);
+                            //调用andriod方法结束答题
+                            }
+                            $(".progressbar").load_control_blood();
+                        }
+                        button.val("下一题");
+                        arr_complex = null;
+                    }
+                }else{
+                    button.val("核对");
+                    $("#question_content").loading_title();
+                    frequency_use_props = 0;
+                }
+                if(questions_index==course.question_count){
+                    //调用提交的方法
+                    //调用提交数据到andriod方法
+                    $(".question_content").complete_submission_data();
+                }
+                break;
+            default:
+                break;
+        }
+    })
+});
+
+
+
 
 function use_of_props(obj){
     //判断样式是不是 道具数量为0
     if($(obj).attr("style_class") == "show_gloomy"){
-        alert("没有此道具");
+        sgt_content="没有此道具";
+        $(".second_content").sgt_all(sgt_content);
     }else{
         //判断是否使用了这种道具
         if(frequency_use_props != 0){
-            alert("已经使用过道具了");
+            sgt_content="已经使用过道具了";
+            $(".second_content").sgt_all(sgt_content);
         }else{
             //取道具适用的题型和当前题型
             var arrt_questions_type = $(obj).attr("applicable_questions").split(",");
@@ -1156,8 +1191,9 @@ function use_of_props(obj){
                         break;
                     //换题
                     case '2':
-                        if(questions_index==course.question_count-1){
-                            alert("最后一题要提交了");
+                        if(questions_index==course.question_count){
+                            sgt_content="最后一题要提交了";
+                            $(".second_content").sgt_all(sgt_content);
                         }else{
                             questions_index++;  //答题之后题目下标加一
                             param_content = null;
@@ -1211,23 +1247,24 @@ function use_of_props(obj){
                     case '4':
                         //判断是不是满血
                         if(existing_blood >= course.blood){
-                            alert("满血状态不可使用");
+                            sgt_content="满血状态不可使用";
+                            $(".second_content").sgt_all(sgt_content);
                         }else{
                             //加血调用加载血量方法
-                            alert(existing_blood);
                             existing_blood++;
                             frequency_use_props++;
-                            alert(existing_blood);
                             $(".progressbar").load_control_blood();
                         }
                         break;
                     default:
                         break;
                 }
-            //                            alert("道具使用成功");
+                sgt_content="道具使用成功";
             //                            alert(data);
+            //                            $(".second_content").sgt_all(sgt_content);
             //                        }else{
-            //                            alert("道具使用失败");
+            //                        sgt_content="道具使用失败";
+            //                            $(".second_content").sgt_all(sgt_content);
             //                        }
             //                    }
             //                });
