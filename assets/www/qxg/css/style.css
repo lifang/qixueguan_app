@@ -69,6 +69,13 @@ li { list-style: none;}
     display:none;
 }
 
+/* 核对按钮 */
+#loaddata{
+    padding: 10px 30px;
+    margin: 10px 280px;
+    font-size: 32px;
+}
+
 
 .center_div{
     width:650px;
@@ -103,8 +110,8 @@ li { list-style: none;}
 /* 连线题和帮助 */
 .qst_con { background: #f2f1f1; position: relative;}
 
-.qst_box { padding: 0 30px; min-height: 800px;}
-h1 { padding: 25px 0; font-weight: normal; line-height: 60px; }
+.qst_box { padding: 0 30px; min-height: 500px;}
+h1 { padding: 25px 0; font-weight: normal; line-height: 60px; text-indent: 30px;}
 .qst_option { margin-bottom: 10px;}
 [st=lx_img] { float:left; position:relative;}
 .ligature_option_right[st=lx_img] { float: right; margin-right: 30px;}
@@ -131,7 +138,7 @@ h1 { padding: 25px 0; font-weight: normal; line-height: 60px; }
     background: #41c4b6;
     padding: 20px 0;
     width: 150px;
-    margin:65px 0 65px 148px;
+    margin:32px 0 32px 148px;
     text-align:center;
     border-radius: 25px;
     cursor: pointer;
